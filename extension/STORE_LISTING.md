@@ -16,7 +16,7 @@ PGet Download Catcher
 Hands browser downloads to the PGet multi-connection download manager on your computer. Open source, no tracking, local only.
 
 ### Full description
-PGet is a free, open-source (MIT) multi-connection download manager for Windows. This extension connects your browser to the PGet desktop app so downloads are faster and resumable.
+PGet is a free, open-source (MIT) multi-connection download manager for Windows, macOS and Linux. This extension connects your browser to the PGet desktop app so downloads are faster and resumable.
 
 What it does
 • When you start a download, the extension hands it to PGet instead of the browser — including the cookies for that one URL, so downloads that need you to be logged in still work.
@@ -29,7 +29,7 @@ What it does
 Privacy
 • The extension only talks to the PGet app on your own computer at 127.0.0.1. It never sends data to any external server.
 • No analytics, no tracking, no ads, no remote code.
-• Source code: https://pget.pg72.tw
+• Source code: https://github.com/PGpenguin72/pget
 
 Requires the PGet desktop app (free): https://pget.pg72.tw
 First use: open the extension popup, click "Pair", then click "Allow" in the PGet window.
@@ -70,7 +70,7 @@ PGet 下載接手
 把瀏覽器的下載交給本機的 PGet 多線路下載器，連登入狀態一起帶過去。開源、無追蹤，資料只送到 127.0.0.1。
 
 ### 完整說明
-PGet 是免費、開源（MIT 授權）的 Windows 多線路下載器。這個擴充功能把瀏覽器接到 PGet 桌面程式，讓下載更快，也能斷點續傳。
+PGet 是免費、開源（MIT 授權）的多線路下載器，支援 Windows、macOS、Linux。這個擴充功能把瀏覽器接到 PGet 桌面程式，讓下載更快，也能斷點續傳。
 
 功能
 • 開始下載時，自動交給 PGet 而不是瀏覽器，並附上「該網址」的 cookie，需要登入才能下載的檔案也沒問題。
@@ -83,7 +83,7 @@ PGet 是免費、開源（MIT 授權）的 Windows 多線路下載器。這個�
 隱私
 • 擴充功能只和你自己電腦上的 PGet（127.0.0.1）通訊，不會把任何資料送到外部伺服器。
 • 沒有分析、沒有追蹤、沒有廣告、沒有遠端程式碼。
-• 原始碼：https://pget.pg72.tw
+• 原始碼：https://github.com/PGpenguin72/pget
 
 需要安裝 PGet 桌面程式（免費）：https://pget.pg72.tw
 第一次使用：打開擴充功能視窗按「配對」，再到 PGet 視窗按「允許」。
