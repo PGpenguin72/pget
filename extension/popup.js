@@ -1,6 +1,6 @@
 import { localizePage, t } from './lib/i18n.js';
 import { initTheme } from './lib/theme.js';
-import { getSettings, setSettings } from './lib/settings.js';
+import { getSettings, setSettings, cookiesEnabled } from './lib/settings.js';
 
 const $ = (id) => document.getElementById(id);
 const statusEl = $('status');
@@ -70,6 +70,18 @@ refreshBtn.addEventListener('click', () => refresh(true));
 
 pausedEl.addEventListener('change', () => setSettings({ paused: pausedEl.checked }));
 
+// Cookie forwarding is enabled from the options page: a permission prompt
+// would close this popup before we could record the answer.
+async function showCookieHint() {
+  $('cookieHint').hidden = await cookiesEnabled();
+}
+
+$('cookieEnable').addEventListener('click', (e) => {
+  e.preventDefault();
+  chrome.runtime.openOptionsPage();
+  window.close();
+});
+
 $('openOptions').addEventListener('click', (e) => {
   e.preventDefault();
   chrome.runtime.openOptionsPage();
@@ -80,9 +92,11 @@ chrome.storage.onChanged.addListener((changes, area) => {
   if (area === 'local' && changes.token) refresh(true);
   if (area === 'session' && changes.pairing) showPairing();
   if (area === 'sync' && changes.paused) pausedEl.checked = !!changes.paused.newValue;
+  if (area === 'local' && changes.sendCookies) showCookieHint();
 });
 
 localizePage();
 initTheme();
 getSettings().then((s) => { pausedEl.checked = !!s.paused; });
+showCookieHint();
 refresh(false);

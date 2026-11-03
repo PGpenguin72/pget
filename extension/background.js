@@ -11,7 +11,10 @@
 //   5. Downloads started by this extension (byExtensionId === our id) are never
 //      intercepted, so the fallback in step 4 cannot loop.
 
-import { getSettings, getToken, hostMatches, clearToken } from './lib/settings.js';
+import {
+  getSettings, getToken, hostMatches, clearToken,
+  cookiesEnabled, getSendCookies, setSendCookies, hasCookiePermission, COOKIE_ORIGINS,
+} from './lib/settings.js';
 import { addDownload, getStatus, pair, forgetPort, PGetError } from './lib/pget-client.js';
 
 const t = (key, subs) => chrome.i18n.getMessage(key, subs) || key;
@@ -36,6 +39,9 @@ function nameFromUrl(url) {
 
 async function cookieHeaderFor(url) {
   if (!HTTP_RE.test(url)) return '';
+  // Optional feature: only when the user turned it on AND granted the
+  // optional host permission. Otherwise the download is sent without cookies.
+  if (!(await cookiesEnabled())) return '';
   try {
     // Only the cookies the browser would send to this exact URL.
     const cookies = await chrome.cookies.getAll({ url });
@@ -199,6 +205,23 @@ function createMenus() {
 chrome.runtime.onInstalled.addListener(createMenus);
 chrome.runtime.onStartup.addListener(createMenus);
 
+// ---------------------------------------------------------------- optional cookie permission
+
+/** Turn the cookie option off if its permission is no longer granted. */
+async function syncCookiePermission() {
+  if ((await getSendCookies()) && !(await hasCookiePermission())) await setSendCookies(false);
+}
+
+chrome.runtime.onInstalled.addListener(() => { syncCookiePermission().catch(() => {}); });
+chrome.runtime.onStartup.addListener(() => { syncCookiePermission().catch(() => {}); });
+chrome.permissions.onRemoved.addListener((removed) => {
+  if ((removed.origins || []).some((o) => COOKIE_ORIGINS.includes(o))) {
+    setSendCookies(false).catch(() => {});
+  } else {
+    syncCookiePermission().catch(() => {});
+  }
+});
+
 async function sendFromMenu({ url, referrer, kind, fallbackToBrowser }) {
   try {
     await addDownload({
@@ -219,8 +242,9 @@ async function sendFromMenu({ url, referrer, kind, fallbackToBrowser }) {
   }
 }
 
-chrome.contextMenus.onClicked.addListener((info, tab) => {
-  const pageUrl = info.frameUrl || info.pageUrl || tab?.url || '';
+chrome.contextMenus.onClicked.addListener((info) => {
+  // info.pageUrl / frameUrl are provided by contextMenus without any host permission.
+  const pageUrl = info.frameUrl || info.pageUrl || '';
   let job = null;
 
   if (info.menuItemId === MENU_LINK) {

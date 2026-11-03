@@ -32,6 +32,35 @@ export function clearToken() {
   return chrome.storage.local.remove('token');
 }
 
+// ---- optional cookie forwarding
+// Off by default. Needs the optional host permission <all_urls>, which is only
+// requested at runtime when the user turns the option on. The preference is
+// kept in storage.local (not sync) because granted permissions are per browser.
+
+export const COOKIE_ORIGINS = Object.freeze(['<all_urls>']);
+
+export async function hasCookiePermission() {
+  try {
+    return await chrome.permissions.contains({ origins: [...COOKIE_ORIGINS] });
+  } catch {
+    return false;
+  }
+}
+
+export async function getSendCookies() {
+  const { sendCookies } = await chrome.storage.local.get('sendCookies');
+  return sendCookies === true;
+}
+
+export function setSendCookies(on) {
+  return chrome.storage.local.set({ sendCookies: !!on });
+}
+
+/** True only when the user enabled the option AND the permission is granted. */
+export async function cookiesEnabled() {
+  return (await getSendCookies()) && (await hasCookiePermission());
+}
+
 /** Normalise user input such as "https://www.Example.com/path" into "www.example.com". */
 export function normaliseSite(input) {
   let s = String(input || '').trim().toLowerCase();

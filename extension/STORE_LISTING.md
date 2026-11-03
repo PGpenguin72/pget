@@ -19,7 +19,8 @@ Hands browser downloads to the PGet multi-connection download manager on your co
 PGet is a free, open-source (MIT) multi-connection download manager for Windows, macOS and Linux. This extension connects your browser to the PGet desktop app so downloads are faster and resumable.
 
 What it does
-• When you start a download, the extension hands it to PGet instead of the browser — including the cookies for that one URL, so downloads that need you to be logged in still work.
+• When you start a download, the extension hands it to PGet instead of the browser.
+• Optional, off by default: "Send sign-in cookies with downloads" also passes the cookies for that one URL (only to 127.0.0.1), so downloads that need you to be signed in still work. The browser asks for permission only when you turn it on.
 • Right-click any link → "Download link with PGet" (http, https and magnet links).
 • Right-click a video or audio element → "Download with PGet".
 • Right-click a page → "Download video on this page with PGet" (PGet uses yt-dlp for supported video sites).
@@ -39,17 +40,17 @@ Send downloads from the browser to the PGet download manager installed on the us
 
 ### Permission justifications
 - **downloads**: Detect new browser downloads, pause them while asking the local PGet app, and cancel/erase them only after PGet has accepted them; otherwise resume them so the download is never lost.
-- **cookies**: Read the cookies the browser would send to the single URL being handed over (`chrome.cookies.getAll({url})`) and pass them to the local PGet app, so downloads that require a login still work. Cookies are not stored and are only sent to 127.0.0.1.
+- **cookies**: Optional feature, off by default. Only when the user turns on "Send sign-in cookies with downloads", read the cookies the browser would send to the single URL being handed over (`chrome.cookies.getAll({url})`) and pass them to the local PGet app, so downloads that require a login still work. Cookies are not stored and are only sent to 127.0.0.1.
 - **storage**: Store the user's settings and the pairing token for the local PGet app.
 - **contextMenus**: Provide "Download link with PGet", "Download with PGet" and "Download video on this page with PGet"; also the way magnet links are sent, avoiding content scripts.
 - **notifications**: Optional "sent to PGet" confirmation (can be turned off) and error / re-pair messages.
 - **Host permission `http://127.0.0.1/*`**: The PGet app listens only on 127.0.0.1 (ports 17890–17899); this is the extension's only network destination.
-- **Host permission `<all_urls>`**: Required by `chrome.cookies.getAll` to read cookies for the download URL, which can be on any site, and to read the URL of the tab the user right-clicked. No content scripts, no page access, and no requests to these sites are made by the extension.
+- **Optional host permission `<all_urls>`** (`optional_host_permissions`, not granted at install): Requested at runtime with `chrome.permissions.request` only when the user turns on "Send sign-in cookies with downloads", because `chrome.cookies.getAll` only returns cookies for sites the extension has host access to and downloads can come from any site. If declined, the option stays off; turning the option off removes the permission. No content scripts, no page access, and no requests to these sites are made by the extension.
 - **Remote code**: No, the extension does not use remote code. All JavaScript is packaged in the extension.
 
 ### Data usage disclosure (Privacy practices tab)
 Data types handled:
-- **Authentication information** — cookies for the URL of a download being handed to PGet.
+- **Authentication information** — only if the user enables the optional cookie setting: cookies for the URL of a download being handed to PGet.
 - **Web history** — the URL, referrer page URL and file name of downloads handed to PGet.
 
 These are used **only** to perform the download in the PGet app on the user's own computer and are sent **only** to `127.0.0.1`. The developer never receives them.
@@ -73,7 +74,8 @@ PGet 下載接手
 PGet 是免費、開源（MIT 授權）的多線路下載器，支援 Windows、macOS、Linux。這個擴充功能把瀏覽器接到 PGet 桌面程式，讓下載更快，也能斷點續傳。
 
 功能
-• 開始下載時，自動交給 PGet 而不是瀏覽器，並附上「該網址」的 cookie，需要登入才能下載的檔案也沒問題。
+• 開始下載時，自動交給 PGet 而不是瀏覽器。
+• 選用功能（預設關閉）：「下載時附上登入 cookie」會一併附上「該網址」的 cookie（只送到 127.0.0.1），需要登入才能下載的檔案也沒問題；只有開啟時瀏覽器才會詢問權限。
 • 在連結上按右鍵 →「用 PGet 下載連結」（支援 http、https 與 magnet 磁力連結）。
 • 在影片或音訊上按右鍵 →「用 PGet 下載」。
 • 在網頁上按右鍵 →「用 PGet 下載影片（此頁）」（支援的影片網站由 PGet 透過 yt-dlp 下載）。
@@ -93,17 +95,17 @@ PGet 是免費、開源（MIT 授權）的多線路下載器，支援 Windows、
 
 ### 權限理由
 - **downloads**：偵測瀏覽器新開始的下載，詢問本機 PGet 期間先暫停；只有 PGet 確認接手後才取消並移除，否則繼續下載，確保下載不會遺失。
-- **cookies**：只讀取「要交出去的那一個網址」瀏覽器本來就會送出的 cookie（`chrome.cookies.getAll({url})`），交給本機 PGet，讓需要登入的下載也能成功。不儲存 cookie，只送到 127.0.0.1。
+- **cookies**：選用功能，預設關閉。只有使用者開啟「下載時附上登入 cookie」時，才讀取「要交出去的那一個網址」瀏覽器本來就會送出的 cookie（`chrome.cookies.getAll({url})`），交給本機 PGet，讓需要登入的下載也能成功。不儲存 cookie，只送到 127.0.0.1。
 - **storage**：儲存使用者設定與本機 PGet 的配對 token。
 - **contextMenus**：提供「用 PGet 下載連結」「用 PGet 下載」「用 PGet 下載影片（此頁）」右鍵選單；磁力連結也由此送出，不需要內容腳本。
 - **notifications**：「已交給 PGet」提示（可關閉），以及錯誤／重新配對提醒。
 - **主機權限 `http://127.0.0.1/*`**：PGet 桌面程式只在 127.0.0.1（連接埠 17890–17899）監聽，這是擴充功能唯一的連線目的地。
-- **主機權限 `<all_urls>`**：`chrome.cookies.getAll` 需要對下載網址所在網站具有主機權限，而下載可能來自任何網站；也用來取得使用者按右鍵的分頁網址。擴充功能不使用內容腳本、不讀取網頁內容，也不會自行連線到這些網站。
+- **選用主機權限 `<all_urls>`**（`optional_host_permissions`，安裝時不會取得）：只有使用者開啟「下載時附上登入 cookie」時，才以 `chrome.permissions.request` 在執行期間詢問。因為 `chrome.cookies.getAll` 需要對下載網址所在網站具有主機權限，而下載可能來自任何網站。使用者拒絕就維持關閉；關閉選項會收回權限。擴充功能不使用內容腳本、不讀取網頁內容，也不會自行連線到這些網站。
 - **遠端程式碼**：否，沒有使用遠端程式碼，所有 JavaScript 都包含在擴充功能套件中。
 
 ### 資料使用揭露（隱私權做法分頁）
 會處理的資料類型：
-- **驗證資訊**：要交給 PGet 的下載網址的 cookie。
+- **驗證資訊**：只有使用者開啟選用的 cookie 設定時，才會處理要交給 PGet 的下載網址的 cookie。
 - **網路瀏覽記錄**：交給 PGet 的下載網址、來源網頁網址（referrer）與檔名。
 
 以上資料**只**用來讓使用者自己電腦上的 PGet 執行下載，**只**送到 `127.0.0.1`，開發者完全不會收到。

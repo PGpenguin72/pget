@@ -156,6 +156,24 @@
   "optExcludedEmpty": {
     "message": "No sites excluded."
   },
+  "optSendCookies": {
+    "message": "Send sign-in cookies with downloads"
+  },
+  "optSendCookiesDesc": {
+    "message": "Only needed for downloads that require you to be signed in. When on, the cookies for that download URL are handed to PGet together with it — and only ever sent to 127.0.0.1 on this computer, nowhere else."
+  },
+  "optSendCookiesPermission": {
+    "message": "Turning this on makes the browser ask for access to data on all sites, which is required to read cookies. Turning it off gives that permission back."
+  },
+  "optSendCookiesDenied": {
+    "message": "Permission not granted — left off"
+  },
+  "popupCookiesOff": {
+    "message": "Downloads that need sign-in are sent without cookies."
+  },
+  "popupCookiesEnable": {
+    "message": "Turn on in settings"
+  },
   "optRemove": {
     "message": "Remove"
   },

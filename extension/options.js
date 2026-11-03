@@ -1,6 +1,9 @@
 import { localizePage, t } from './lib/i18n.js';
 import { initTheme, applyTheme } from './lib/theme.js';
-import { getSettings, setSettings, normaliseSite, DEFAULT_SETTINGS } from './lib/settings.js';
+import {
+  getSettings, setSettings, normaliseSite, DEFAULT_SETTINGS,
+  cookiesEnabled, setSendCookies, COOKIE_ORIGINS,
+} from './lib/settings.js';
 
 const $ = (id) => document.getElementById(id);
 const statusEl = $('status');
@@ -113,6 +116,37 @@ $('siteForm').addEventListener('submit', async (e) => {
   renderSites();
 });
 
+// ------------------------------------------------------------ cookies (optional)
+
+const cookiesEl = $('sendCookies');
+
+cookiesEl.addEventListener('change', () => {
+  if (cookiesEl.checked) {
+    // permissions.request must run directly inside the user gesture: no await before it.
+    chrome.permissions.request({ origins: [...COOKIE_ORIGINS] }).then(async (granted) => {
+      if (!granted) {
+        cookiesEl.checked = false;
+        await setSendCookies(false);
+        toast('optSendCookiesDenied');
+        return;
+      }
+      await setSendCookies(true);
+      toast('optSaved');
+    }, () => {
+      cookiesEl.checked = false;
+      toast('optSendCookiesDenied');
+    });
+  } else {
+    setSendCookies(false)
+      .then(() => chrome.permissions.remove({ origins: [...COOKIE_ORIGINS] }).catch(() => false))
+      .then(() => toast('optSaved'));
+  }
+});
+
+async function syncCookieSwitch() {
+  cookiesEl.checked = await cookiesEnabled();
+}
+
 // ------------------------------------------------------------ appearance
 
 $('notify').addEventListener('change', (e) => save({ notify: e.target.checked }));
@@ -139,13 +173,17 @@ async function init() {
   radio.checked = true;
   $('extVersion').textContent = t('optVersion', [chrome.runtime.getManifest().version]);
   renderSites();
+  await syncCookieSwitch();
   refreshStatus(false);
 
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area === 'local' && changes.token) refreshStatus();
     if (area === 'session' && changes.pairing) refreshStatus(false);
     if (area === 'sync' && changes.paused) $('paused').checked = !!changes.paused.newValue;
+    if (area === 'local' && changes.sendCookies) syncCookieSwitch();
   });
+  chrome.permissions.onRemoved.addListener(syncCookieSwitch);
+  chrome.permissions.onAdded.addListener(syncCookieSwitch);
 }
 
 init();

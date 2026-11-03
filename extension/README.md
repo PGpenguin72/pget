@@ -27,7 +27,7 @@
 
 1. `downloads.onCreated` 收到新下載。
 2. 先做本機檢查：只處理 `http(s)`（`blob:`、`data:`、`file:` 放行）、未開「暫停攔截」、不在排除網站（比對下載網址、最終網址、referrer 的網域與子網域）、大小已知且 ≥ 門檻（預設 1 MB）、已配對、不是無痕視窗、不是本擴充功能自己發起的下載。不符合就完全不碰。
-3. 符合的下載先**暫停**（不是取消），取 cookie（只取該網址：`chrome.cookies.getAll({ url })`）、User-Agent、referrer，POST `/add`。
+3. 符合的下載先**暫停**（不是取消），若使用者開啟了選用的「下載時附上登入 cookie」且有 `<all_urls>` 選用權限，才取 cookie（只取該網址：`chrome.cookies.getAll({ url })`）、User-Agent、referrer，POST `/add`。
 4. PGet 回 200 才**取消並從下載清單移除**；任何失敗（沒開、逾時、401、格式錯）都**繼續下載**。無法繼續時用 `downloads.download()` 重新下載；這種下載的 `byExtensionId` 是自己，第 2 步會跳過，不會無限迴圈。
 5. 401 → 清掉 token、顯示「需要重新配對」通知與圖示上的 `!`。
 
@@ -46,4 +46,4 @@
 
 ## 隱私
 
-設定存在 `chrome.storage.sync`，配對 token 存在 `chrome.storage.local`（只屬於這台電腦）。cookie 不儲存，只在交出下載時讀一次並送到 `127.0.0.1`。修改資料處理方式時請同步更新官網隱私權政策（https://pget.pg72.tw/privacy/）。
+設定存在 `chrome.storage.sync`，配對 token 存在 `chrome.storage.local`（只屬於這台電腦）。cookie 轉送預設關閉（`storage.local` 的 `sendCookies`），開啟時才在執行期間要求 `<all_urls>` 選用權限；cookie 不儲存，只在交出下載時讀一次並送到 `127.0.0.1`。修改資料處理方式時請同步更新官網隱私權政策（https://pget.pg72.tw/privacy/）。

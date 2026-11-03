@@ -156,6 +156,24 @@
   "optExcludedEmpty": {
     "message": "除外しているサイトはありません。"
   },
+  "optSendCookies": {
+    "message": "ダウンロード時にログイン Cookie を送る"
+  },
+  "optSendCookiesDesc": {
+    "message": "ログインが必要なダウンロードのときだけ必要です。オンにすると、そのダウンロード URL の Cookie を PGet に一緒に渡します。送信先はこのPCの 127.0.0.1 だけで、ほかには送りません。"
+  },
+  "optSendCookiesPermission": {
+    "message": "オンにすると、Cookie の読み取りに必要な「すべてのサイトのデータへのアクセス」の許可をブラウザが確認します。オフにするとその許可も取り消します。"
+  },
+  "optSendCookiesDenied": {
+    "message": "許可されなかったため、オフのままです"
+  },
+  "popupCookiesOff": {
+    "message": "ログインが必要なダウンロードには Cookie を付けていません。"
+  },
+  "popupCookiesEnable": {
+    "message": "設定でオンにする"
+  },
   "optRemove": {
     "message": "削除"
   },

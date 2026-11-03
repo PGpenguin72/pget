@@ -156,6 +156,24 @@
   "optExcludedEmpty": {
     "message": "目前没有排除任何网站。"
   },
+  "optSendCookies": {
+    "message": "下载时附带登录 Cookie"
+  },
+  "optSendCookiesDesc": {
+    "message": "只有“需要登录才能下载”的文件才用得到。开启后，扩展会把该下载链接的 Cookie 一起交给 PGet，而且只发送到这台电脑的 127.0.0.1，不会发送到其他地方。"
+  },
+  "optSendCookiesPermission": {
+    "message": "开启时浏览器会询问是否允许读取所有网站的数据，这是读取 Cookie 所必需的权限；关闭此选项会一并收回。"
+  },
+  "optSendCookiesDenied": {
+    "message": "未获得权限，保持关闭"
+  },
+  "popupCookiesOff": {
+    "message": "需要登录的下载目前不会附带 Cookie。"
+  },
+  "popupCookiesEnable": {
+    "message": "去设置中开启"
+  },
   "optRemove": {
     "message": "移除"
   },

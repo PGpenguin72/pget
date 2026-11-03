@@ -156,6 +156,24 @@
   "optExcludedEmpty": {
     "message": "제외한 사이트가 없습니다."
   },
+  "optSendCookies": {
+    "message": "다운로드할 때 로그인 쿠키 함께 보내기"
+  },
+  "optSendCookiesDesc": {
+    "message": "로그인해야 받을 수 있는 다운로드에만 필요합니다. 켜면 해당 다운로드 URL의 쿠키를 PGet에 함께 넘기며, 이 컴퓨터의 127.0.0.1로만 보내고 다른 곳으로는 보내지 않습니다."
+  },
+  "optSendCookiesPermission": {
+    "message": "켜면 쿠키를 읽는 데 필요한 \"모든 사이트의 데이터 액세스\" 권한을 브라우저가 요청합니다. 끄면 이 권한도 함께 반납합니다."
+  },
+  "optSendCookiesDenied": {
+    "message": "권한을 받지 못해 꺼진 상태로 둡니다"
+  },
+  "popupCookiesOff": {
+    "message": "로그인이 필요한 다운로드에 쿠키를 붙이지 않고 있습니다."
+  },
+  "popupCookiesEnable": {
+    "message": "설정에서 켜기"
+  },
   "optRemove": {
     "message": "삭제"
   },

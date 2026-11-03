@@ -31,5 +31,13 @@ body { width: 320px; }
 .toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; }
 .toggle-row .label { display: block; font-weight: 600; }
 .toggle-row .sub { display: block; font-size: 12px; }
+.cookie-hint {
+  margin: 10px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.cookie-hint a { white-space: nowrap; margin-left: 2px; }
 
 .links { display: flex; justify-content: space-between; padding: 0 4px; font-size: 13px; }

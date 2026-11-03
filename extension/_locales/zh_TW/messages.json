@@ -156,6 +156,24 @@
   "optExcludedEmpty": {
     "message": "目前沒有排除任何網站。"
   },
+  "optSendCookies": {
+    "message": "下載時附上登入 cookie"
+  },
+  "optSendCookiesDesc": {
+    "message": "只有「要登入才能下載」的檔案需要這個。開啟後，擴充功能會把該下載網址的 cookie 一起交給 PGet，而且只送到這台電腦的 127.0.0.1，不會送到其他地方。"
+  },
+  "optSendCookiesPermission": {
+    "message": "開啟時瀏覽器會詢問是否允許讀取所有網站的資料，這是讀取 cookie 必要的權限；關掉這個選項就會一併收回。"
+  },
+  "optSendCookiesDenied": {
+    "message": "沒有取得權限，維持關閉"
+  },
+  "popupCookiesOff": {
+    "message": "需要登入的下載目前不會附上 cookie。"
+  },
+  "popupCookiesEnable": {
+    "message": "到設定開啟"
+  },
   "optRemove": {
     "message": "移除"
   },
