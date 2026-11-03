@@ -102,7 +102,13 @@ jobs:
           APPLE_ID: ${{ vars.SIGNING_ENABLED == 'true' && secrets.APPLE_ID || '' }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ vars.SIGNING_ENABLED == 'true' && secrets.APPLE_APP_SPECIFIC_PASSWORD || '' }}
           APPLE_TEAM_ID: ${{ vars.SIGNING_ENABLED == 'true' && secrets.APPLE_TEAM_ID || '' }}
-        run: npx electron-builder --publish never
+        # electron-builder 會把「空字串」的 CSC_LINK 當成路徑去讀（macOS 報 "app not a file"），
+        # 所以沒設定的簽章變數要整個 unset，不能留空。
+        run: |
+          for v in CSC_LINK CSC_KEY_PASSWORD WIN_CSC_LINK WIN_CSC_KEY_PASSWORD APPLE_ID APPLE_APP_SPECIFIC_PASSWORD APPLE_TEAM_ID; do
+            if [ -z "${!v:-}" ]; then unset "$v"; fi
+          done
+          npx electron-builder --publish never
 
       - uses: actions/upload-artifact@v4
         with:
