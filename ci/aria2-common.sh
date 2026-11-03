@@ -44,6 +44,17 @@ build_cares() {
   cmake --install "$WORK/build-cares"
 }
 
+# Static OpenSSL into $PREFIX (Linux). no-module 讓 legacy／default provider 直接編進
+# libcrypto.a，靜態執行檔不用另外帶 legacy.so 也能 OSSL_PROVIDER_load("legacy")。
+build_openssl() {
+  tarball=$(fetch "$OPENSSL_URL" "$OPENSSL_SHA256")
+  tar -xzf "$tarball" -C "$WORK"
+  (cd "$WORK/openssl-$OPENSSL_VERSION" &&
+    ./Configure no-shared no-module enable-legacy no-tests no-docs       --prefix="$PREFIX" --libdir=lib --openssldir=/etc/ssl &&
+    make -j"$(nproc)" build_libs &&
+    make install_dev) >&2
+}
+
 # Static expat (CMake) into $PREFIX (macOS only; Alpine ships expat-static).
 build_expat() {
   tarball=$(fetch "$EXPAT_URL" "$EXPAT_SHA256")

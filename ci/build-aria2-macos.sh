@@ -39,13 +39,12 @@ cd "$SRC"
 # hand configure their flags directly instead of via pkg-config.
 PKG_CONFIG_LIBDIR="$PREFIX/lib/pkgconfig" \
 ZLIB_CFLAGS="" ZLIB_LIBS="-lz" \
-SQLITE3_CFLAGS="" SQLITE3_LIBS="-lsqlite3" \
 ./configure \
   --prefix=/usr/local \
   --disable-nls \
   --with-appletls --without-openssl --without-gnutls \
   --without-libxml2 --with-libexpat \
-  --with-libcares --with-libz --with-sqlite3 --without-libssh2 \
+  --with-libcares --with-libz --without-sqlite3 --without-libssh2 \
   --without-libgcrypt --without-libnettle --without-libgmp \
   CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
 make -j"$(sysctl -n hw.ncpu)"

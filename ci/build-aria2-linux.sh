@@ -7,8 +7,8 @@
 # native architecture decides what is built, so run it on an x64 or arm64 runner.
 # Output: dist-aria2/aria2c-linux-<arch-label>.tar.gz
 #
-# Static libs: OpenSSL, zlib, SQLite, expat, libssh2 from Alpine's *-static
-# packages; c-ares is built from source because Alpine has no c-ares-static.
+# Static libs: zlib, SQLite, expat, libssh2 from Alpine's *-static
+# packages; c-ares and OpenSSL (no-module, for the legacy provider) are built from source.
 # TLS CA certificates: OpenSSL's default dir (/etc/ssl/certs) works on Debian,
 # Ubuntu, Arch, Alpine, openSUSE; on Fedora/RHEL the app should pass
 # --ca-certificate=/etc/pki/tls/certs/ca-bundle.crt (detect at runtime).
@@ -24,15 +24,14 @@ mkdir -p "$WORK" "$PREFIX"
 
 apk add --no-cache \
   build-base cmake curl patch xz pkgconf linux-headers perl \
-  openssl-dev openssl-libs-static \
   zlib-dev zlib-static \
-  sqlite-dev sqlite-static \
   expat-dev expat-static \
   libssh2-dev libssh2-static \
   ca-certificates
 
 . "$CI_DIR/aria2-common.sh"
 
+build_openssl
 build_cares
 SRC=$(prepare_aria2_source)
 
@@ -43,7 +42,7 @@ PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig" ./configure \
   --disable-nls \
   --without-gnutls --with-openssl \
   --without-libxml2 --with-libexpat \
-  --with-libcares --with-libz --with-sqlite3 --with-libssh2 \
+  --with-libcares --with-libz --without-sqlite3 --with-libssh2 \
   --without-libgcrypt --without-libnettle --without-libgmp \
   ARIA2_STATIC=yes \
   CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
