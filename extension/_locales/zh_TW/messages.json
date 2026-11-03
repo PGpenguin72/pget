@@ -1,0 +1,206 @@
+{
+  "extName": {
+    "message": "PGet 下載接手"
+  },
+  "extDescription": {
+    "message": "把瀏覽器的下載交給本機的 PGet 多線路下載器，連登入狀態一起帶過去。開源、無追蹤，資料只送到 127.0.0.1。"
+  },
+  "actionTitle": {
+    "message": "PGet"
+  },
+  "menuDownloadLink": {
+    "message": "用 PGet 下載連結"
+  },
+  "menuDownloadMedia": {
+    "message": "用 PGet 下載"
+  },
+  "menuDownloadPageVideo": {
+    "message": "用 PGet 下載影片（此頁）"
+  },
+  "notifySentTitle": {
+    "message": "已交給 PGet"
+  },
+  "notifySentBody": {
+    "message": "$ARG$ 正在用 PGet 下載",
+    "placeholders": {
+      "arg": {
+        "content": "$1"
+      }
+    }
+  },
+  "notifyUnnamedFile": {
+    "message": "檔案"
+  },
+  "notifyPairTitle": {
+    "message": "需要重新配對 PGet"
+  },
+  "notifyPairBody": {
+    "message": "這次的下載已交回瀏覽器。點這裡開啟設定並重新配對。"
+  },
+  "notifyErrorTitle": {
+    "message": "沒辦法交給 PGet"
+  },
+  "notifyNotRunningBody": {
+    "message": "PGet 好像沒有開。開啟 PGet 之後再試一次；能用瀏覽器下載的已經改由瀏覽器下載。"
+  },
+  "notifyErrorBody": {
+    "message": "和 PGet 連線時出了問題；能用瀏覽器下載的已經改由瀏覽器下載。"
+  },
+  "notifyUnsupportedBody": {
+    "message": "這個連結 PGet 處理不了（只支援 http、https 與 magnet）。"
+  },
+  "statusChecking": {
+    "message": "檢查中…"
+  },
+  "statusConnected": {
+    "message": "已連線"
+  },
+  "statusNotRunning": {
+    "message": "PGet 沒有在執行"
+  },
+  "statusNotPaired": {
+    "message": "尚未配對"
+  },
+  "statusNotRunningHint": {
+    "message": "開啟桌面版 PGet 後就會自動連上。在那之前，下載照常由瀏覽器處理。"
+  },
+  "statusNotPairedHint": {
+    "message": "按「配對」後，到 PGet 視窗按允許，之後下載就會自動交給 PGet。"
+  },
+  "popupRefresh": {
+    "message": "重新檢查"
+  },
+  "popupPair": {
+    "message": "配對"
+  },
+  "popupPauseLabel": {
+    "message": "暫停攔截"
+  },
+  "popupPauseHint": {
+    "message": "開啟時下載一律交給瀏覽器"
+  },
+  "popupOptions": {
+    "message": "設定"
+  },
+  "popupWebsite": {
+    "message": "PGet 官網"
+  },
+  "popupAppVersion": {
+    "message": "PGet $ARG$",
+    "placeholders": {
+      "arg": {
+        "content": "$1"
+      }
+    }
+  },
+  "pairWaiting": {
+    "message": "等待 PGet 允許…"
+  },
+  "pairWaitingHint": {
+    "message": "請到 PGet 視窗按「允許」（60 秒內）。"
+  },
+  "pairDenied": {
+    "message": "PGet 拒絕了配對，或等太久逾時了。"
+  },
+  "pairFailed": {
+    "message": "配對失敗，請確認 PGet 有在執行後再試一次。"
+  },
+  "pairSuccess": {
+    "message": "配對成功"
+  },
+  "optionsTitle": {
+    "message": "PGet 設定"
+  },
+  "optionsHeading": {
+    "message": "擴充功能設定"
+  },
+  "optConnection": {
+    "message": "連線"
+  },
+  "optForget": {
+    "message": "忘記配對"
+  },
+  "optForgetConfirm": {
+    "message": "確定要忘記配對嗎？之後下載會交給瀏覽器，直到重新配對。"
+  },
+  "optForgotten": {
+    "message": "已忘記配對"
+  },
+  "optRepair": {
+    "message": "重新配對"
+  },
+  "optInterception": {
+    "message": "攔截下載"
+  },
+  "optPauseDesc": {
+    "message": "開啟後擴充功能不會攔截任何下載；右鍵選單仍可使用。"
+  },
+  "optMinSize": {
+    "message": "最小檔案大小"
+  },
+  "optMinSizeDesc": {
+    "message": "比這個小的檔案（大小已知時）留給瀏覽器下載。設成 0 表示全部攔截。"
+  },
+  "optExcluded": {
+    "message": "不攔截的網站"
+  },
+  "optExcludedDesc": {
+    "message": "這些網站（含子網域）的下載一律交給瀏覽器。"
+  },
+  "optExcludedPlaceholder": {
+    "message": "例如 example.com"
+  },
+  "optAdd": {
+    "message": "加入"
+  },
+  "optExcludedEmpty": {
+    "message": "目前沒有排除任何網站。"
+  },
+  "optRemove": {
+    "message": "移除"
+  },
+  "optInvalidSite": {
+    "message": "看不懂這個網址，請輸入像 example.com 的網域。"
+  },
+  "optAppearance": {
+    "message": "外觀與通知"
+  },
+  "optNotify": {
+    "message": "交給 PGet 時顯示通知"
+  },
+  "optNotifyDesc": {
+    "message": "工具列圖示上的 ✓ 標記會一直顯示。錯誤與配對提醒不受這個開關影響。"
+  },
+  "optTheme": {
+    "message": "主題"
+  },
+  "optThemeSystem": {
+    "message": "跟隨系統"
+  },
+  "optThemeLight": {
+    "message": "淺色"
+  },
+  "optThemeDark": {
+    "message": "深色"
+  },
+  "optAbout": {
+    "message": "關於"
+  },
+  "optPrivacyNote": {
+    "message": "PGet 擴充功能只會和這台電腦上的 PGet（127.0.0.1）通訊，不會把任何資料送到外部伺服器，也沒有任何分析或追蹤。"
+  },
+  "optPrivacyLink": {
+    "message": "隱私權政策"
+  },
+  "optVersion": {
+    "message": "擴充功能版本 $ARG$",
+    "placeholders": {
+      "arg": {
+        "content": "$1"
+      }
+    }
+  },
+  "optSaved": {
+    "message": "已儲存"
+  }
+}

@@ -1,0 +1,66 @@
+name: 錯誤回報 / Bug report
+description: PGet 有東西壞掉了 / Something in PGet isn't working
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        謝謝回報！送出前請先搜尋看看有沒有人回報過。**安全性問題請不要在這裡公開**，改用 [Security Advisories](https://github.com/PGpenguin72/pget/security/advisories/new)。
+        Thanks for reporting! Please search existing issues first. **Do not post security issues here**; use [Security Advisories](https://github.com/PGpenguin72/pget/security/advisories/new) instead.
+
+        ⚠️ 貼網址或紀錄前，請拿掉 cookie、token、帳號等私人資訊。/ Remove cookies, tokens and account details before pasting URLs or logs.
+  - type: dropdown
+    id: component
+    attributes:
+      label: 哪個部分？/ Which part?
+      options:
+        - 桌面程式 / Desktop app
+        - 瀏覽器擴充功能 / Browser extension
+        - 影片下載（yt-dlp）/ Video download (yt-dlp)
+        - BT／磁力 / BitTorrent / magnet
+        - 官網 / Website
+        - 其他 / Other
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: 發生什麼事？/ What happened?
+      description: 你預期會怎樣、實際上怎樣 / What you expected vs. what actually happened
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 重現步驟 / Steps to reproduce
+      placeholder: |
+        1. …
+        2. …
+        3. …
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: PGet 版本 / PGet version
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: 作業系統 / Operating system
+      placeholder: Windows 11 24H2 / macOS 15 / Ubuntu 24.04
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: 瀏覽器與擴充功能版本（如果有關）/ Browser & extension version (if relevant)
+      placeholder: Chrome 131 / PGet Extension 0.1.0
+  - type: textarea
+    id: logs
+    attributes:
+      label: 紀錄或截圖 / Logs or screenshots
+      description: 會自動排版成程式碼區塊 / Will be formatted as code
+      render: text

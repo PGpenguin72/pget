@@ -1,0 +1,206 @@
+{
+  "extName": {
+    "message": "PGet 다운로드 캐처"
+  },
+  "extDescription": {
+    "message": "브라우저 다운로드를 내 컴퓨터의 멀티 연결 다운로더 PGet에 넘겨줍니다. 오픈 소스, 추적 없음, 127.0.0.1에만 전송합니다."
+  },
+  "actionTitle": {
+    "message": "PGet"
+  },
+  "menuDownloadLink": {
+    "message": "PGet으로 링크 다운로드"
+  },
+  "menuDownloadMedia": {
+    "message": "PGet으로 다운로드"
+  },
+  "menuDownloadPageVideo": {
+    "message": "PGet으로 이 페이지의 동영상 다운로드"
+  },
+  "notifySentTitle": {
+    "message": "PGet으로 보냈습니다"
+  },
+  "notifySentBody": {
+    "message": "$ARG$ 을(를) PGet에서 다운로드 중입니다",
+    "placeholders": {
+      "arg": {
+        "content": "$1"
+      }
+    }
+  },
+  "notifyUnnamedFile": {
+    "message": "파일"
+  },
+  "notifyPairTitle": {
+    "message": "PGet 페어링이 필요합니다"
+  },
+  "notifyPairBody": {
+    "message": "이번 다운로드는 브라우저가 계속 진행합니다. 클릭해서 설정을 열고 다시 페어링하세요."
+  },
+  "notifyErrorTitle": {
+    "message": "PGet으로 보낼 수 없습니다"
+  },
+  "notifyNotRunningBody": {
+    "message": "PGet이 실행 중이 아닌 것 같습니다. 실행한 뒤 다시 시도하세요. 가능한 경우 브라우저가 대신 다운로드합니다."
+  },
+  "notifyErrorBody": {
+    "message": "PGet과 통신하는 중 문제가 발생했습니다. 가능한 경우 브라우저가 대신 다운로드합니다."
+  },
+  "notifyUnsupportedBody": {
+    "message": "이 링크는 PGet에서 처리할 수 없습니다(http, https, magnet만 지원)."
+  },
+  "statusChecking": {
+    "message": "확인 중…"
+  },
+  "statusConnected": {
+    "message": "연결됨"
+  },
+  "statusNotRunning": {
+    "message": "PGet이 실행 중이 아님"
+  },
+  "statusNotPaired": {
+    "message": "페어링 안 됨"
+  },
+  "statusNotRunningHint": {
+    "message": "PGet 데스크톱 앱을 실행하면 자동으로 연결됩니다. 그 전까지는 브라우저가 평소처럼 다운로드합니다."
+  },
+  "statusNotPairedHint": {
+    "message": "'페어링'을 누른 뒤 PGet 창에서 허용하면 이후 다운로드가 PGet으로 넘어갑니다."
+  },
+  "popupRefresh": {
+    "message": "다시 확인"
+  },
+  "popupPair": {
+    "message": "페어링"
+  },
+  "popupPauseLabel": {
+    "message": "가로채기 일시 중지"
+  },
+  "popupPauseHint": {
+    "message": "켜져 있으면 모든 다운로드를 브라우저가 처리"
+  },
+  "popupOptions": {
+    "message": "설정"
+  },
+  "popupWebsite": {
+    "message": "PGet 웹사이트"
+  },
+  "popupAppVersion": {
+    "message": "PGet $ARG$",
+    "placeholders": {
+      "arg": {
+        "content": "$1"
+      }
+    }
+  },
+  "pairWaiting": {
+    "message": "PGet 허용 대기 중…"
+  },
+  "pairWaitingHint": {
+    "message": "PGet 창에서 '허용'을 눌러 주세요(60초 이내)."
+  },
+  "pairDenied": {
+    "message": "PGet에서 거부했거나 시간이 초과되었습니다."
+  },
+  "pairFailed": {
+    "message": "페어링에 실패했습니다. PGet이 실행 중인지 확인하고 다시 시도하세요."
+  },
+  "pairSuccess": {
+    "message": "페어링 완료"
+  },
+  "optionsTitle": {
+    "message": "PGet 설정"
+  },
+  "optionsHeading": {
+    "message": "확장 프로그램 설정"
+  },
+  "optConnection": {
+    "message": "연결"
+  },
+  "optForget": {
+    "message": "페어링 해제"
+  },
+  "optForgetConfirm": {
+    "message": "페어링을 해제할까요? 다시 페어링할 때까지 브라우저가 다운로드합니다."
+  },
+  "optForgotten": {
+    "message": "페어링을 해제했습니다"
+  },
+  "optRepair": {
+    "message": "다시 페어링"
+  },
+  "optInterception": {
+    "message": "다운로드 가로채기"
+  },
+  "optPauseDesc": {
+    "message": "켜져 있는 동안 다운로드를 가로채지 않습니다. 오른쪽 클릭 메뉴는 계속 사용할 수 있습니다."
+  },
+  "optMinSize": {
+    "message": "최소 파일 크기"
+  },
+  "optMinSizeDesc": {
+    "message": "이보다 작은 파일(크기를 알 때)은 브라우저가 다운로드합니다. 0이면 모두 가로챕니다."
+  },
+  "optExcluded": {
+    "message": "제외할 사이트"
+  },
+  "optExcludedDesc": {
+    "message": "이 사이트(하위 도메인 포함)의 다운로드는 항상 브라우저가 처리합니다."
+  },
+  "optExcludedPlaceholder": {
+    "message": "예: example.com"
+  },
+  "optAdd": {
+    "message": "추가"
+  },
+  "optExcludedEmpty": {
+    "message": "제외한 사이트가 없습니다."
+  },
+  "optRemove": {
+    "message": "삭제"
+  },
+  "optInvalidSite": {
+    "message": "사이트 주소가 아닌 것 같습니다. example.com 같은 도메인을 입력하세요."
+  },
+  "optAppearance": {
+    "message": "모양 및 알림"
+  },
+  "optNotify": {
+    "message": "PGet으로 보낼 때 알림 표시"
+  },
+  "optNotifyDesc": {
+    "message": "툴바 아이콘의 ✓ 배지는 항상 표시됩니다. 오류와 페어링 알림에는 영향을 주지 않습니다."
+  },
+  "optTheme": {
+    "message": "테마"
+  },
+  "optThemeSystem": {
+    "message": "시스템"
+  },
+  "optThemeLight": {
+    "message": "라이트"
+  },
+  "optThemeDark": {
+    "message": "다크"
+  },
+  "optAbout": {
+    "message": "정보"
+  },
+  "optPrivacyNote": {
+    "message": "PGet 확장 프로그램은 이 컴퓨터의 PGet(127.0.0.1)과만 통신합니다. 외부 서버로 데이터를 보내지 않으며 분석이나 추적도 없습니다."
+  },
+  "optPrivacyLink": {
+    "message": "개인정보 처리방침"
+  },
+  "optVersion": {
+    "message": "확장 프로그램 버전 $ARG$",
+    "placeholders": {
+      "arg": {
+        "content": "$1"
+      }
+    }
+  },
+  "optSaved": {
+    "message": "저장됨"
+  }
+}

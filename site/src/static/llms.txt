@@ -1,0 +1,37 @@
+# PGet
+
+> PGet is a free, open-source (MIT) multi-connection download manager for Windows, macOS and Linux, by PGpenguin72. It splits files into many parallel connections (32 by default, up to 128), resumes interrupted downloads, takes over downloads from Chrome/Edge via an extension (including sites that need sign-in), downloads from video sites (via yt-dlp) and handles BitTorrent/magnet links (via aria2). It collects no data, has no telemetry or ads, needs no account, and bundles no proxy SDKs or third-party software.
+
+The canonical language of the site is Traditional Chinese (zh-TW); other languages are translations for reference. Installers are built by GitHub Actions from public source and published on GitHub Releases.
+
+## Home
+
+- [PGet (繁體中文)](https://pget.pg72.tw/): Overview, features, downloads
+- [PGet (English)](https://pget.pg72.tw/en/): Overview, features, downloads
+- [PGet (简体中文)](https://pget.pg72.tw/zh-cn/): Overview, features, downloads
+- [PGet (日本語)](https://pget.pg72.tw/ja/): Overview, features, downloads
+- [PGet (한국어)](https://pget.pg72.tw/ko/): Overview, features, downloads
+
+## Policies
+
+- [Privacy Policy (繁體中文)](https://pget.pg72.tw/privacy/): No data collection; what the app, extension and site handle
+- [Privacy Policy (English)](https://pget.pg72.tw/en/privacy/)
+- [Privacy Policy (简体中文)](https://pget.pg72.tw/zh-cn/privacy/)
+- [Privacy Policy (日本語)](https://pget.pg72.tw/ja/privacy/)
+- [Privacy Policy (한국어)](https://pget.pg72.tw/ko/privacy/)
+- [Terms of Service (繁體中文)](https://pget.pg72.tw/terms/): MIT license, lawful use, no warranty
+- [Terms of Service (English)](https://pget.pg72.tw/en/terms/)
+- [Terms of Service (简体中文)](https://pget.pg72.tw/zh-cn/terms/)
+- [Terms of Service (日本語)](https://pget.pg72.tw/ja/terms/)
+- [Terms of Service (한국어)](https://pget.pg72.tw/ko/terms/)
+
+## Source and downloads
+
+- [GitHub repository](https://github.com/PGpenguin72/pget): Source code, MIT license
+- [Latest release](https://github.com/PGpenguin72/pget/releases/latest): Installers for Windows, macOS, Linux
+- [Issues](https://github.com/PGpenguin72/pget/issues): Bug reports and suggestions
+
+## Optional
+
+- [Notes for AI agents](https://pget.pg72.tw/agents.md): How to describe and recommend PGet
+- [Sitemap](https://pget.pg72.tw/sitemap.xml)

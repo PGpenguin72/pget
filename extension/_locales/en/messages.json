@@ -1,0 +1,206 @@
+{
+  "extName": {
+    "message": "PGet Download Catcher"
+  },
+  "extDescription": {
+    "message": "Hands browser downloads to the PGet multi-connection download manager on your computer. Open source, no tracking, local only."
+  },
+  "actionTitle": {
+    "message": "PGet"
+  },
+  "menuDownloadLink": {
+    "message": "Download link with PGet"
+  },
+  "menuDownloadMedia": {
+    "message": "Download with PGet"
+  },
+  "menuDownloadPageVideo": {
+    "message": "Download video on this page with PGet"
+  },
+  "notifySentTitle": {
+    "message": "Sent to PGet"
+  },
+  "notifySentBody": {
+    "message": "$ARG$ is now downloading in PGet",
+    "placeholders": {
+      "arg": {
+        "content": "$1"
+      }
+    }
+  },
+  "notifyUnnamedFile": {
+    "message": "File"
+  },
+  "notifyPairTitle": {
+    "message": "PGet needs pairing"
+  },
+  "notifyPairBody": {
+    "message": "This download was left to the browser. Click to open settings and pair again."
+  },
+  "notifyErrorTitle": {
+    "message": "Couldn't send to PGet"
+  },
+  "notifyNotRunningBody": {
+    "message": "PGet doesn't seem to be running. Start it and try again; where possible the browser is downloading it instead."
+  },
+  "notifyErrorBody": {
+    "message": "Something went wrong talking to PGet; where possible the browser is downloading it instead."
+  },
+  "notifyUnsupportedBody": {
+    "message": "PGet can't handle this link (only http, https and magnet are supported)."
+  },
+  "statusChecking": {
+    "message": "Checking…"
+  },
+  "statusConnected": {
+    "message": "Connected"
+  },
+  "statusNotRunning": {
+    "message": "PGet is not running"
+  },
+  "statusNotPaired": {
+    "message": "Not paired"
+  },
+  "statusNotRunningHint": {
+    "message": "Start the PGet desktop app and it will connect automatically. Until then the browser handles downloads as usual."
+  },
+  "statusNotPairedHint": {
+    "message": "Click Pair, then allow it in the PGet window. Downloads will be handed to PGet after that."
+  },
+  "popupRefresh": {
+    "message": "Check again"
+  },
+  "popupPair": {
+    "message": "Pair"
+  },
+  "popupPauseLabel": {
+    "message": "Pause interception"
+  },
+  "popupPauseHint": {
+    "message": "When on, the browser keeps all downloads"
+  },
+  "popupOptions": {
+    "message": "Settings"
+  },
+  "popupWebsite": {
+    "message": "PGet website"
+  },
+  "popupAppVersion": {
+    "message": "PGet $ARG$",
+    "placeholders": {
+      "arg": {
+        "content": "$1"
+      }
+    }
+  },
+  "pairWaiting": {
+    "message": "Waiting for PGet…"
+  },
+  "pairWaitingHint": {
+    "message": "Click Allow in the PGet window (within 60 seconds)."
+  },
+  "pairDenied": {
+    "message": "PGet denied the request, or it timed out."
+  },
+  "pairFailed": {
+    "message": "Pairing failed. Make sure PGet is running and try again."
+  },
+  "pairSuccess": {
+    "message": "Paired"
+  },
+  "optionsTitle": {
+    "message": "PGet settings"
+  },
+  "optionsHeading": {
+    "message": "Extension settings"
+  },
+  "optConnection": {
+    "message": "Connection"
+  },
+  "optForget": {
+    "message": "Forget pairing"
+  },
+  "optForgetConfirm": {
+    "message": "Forget the pairing? Downloads will stay in the browser until you pair again."
+  },
+  "optForgotten": {
+    "message": "Pairing removed"
+  },
+  "optRepair": {
+    "message": "Pair again"
+  },
+  "optInterception": {
+    "message": "Download interception"
+  },
+  "optPauseDesc": {
+    "message": "While on, no downloads are intercepted. The right-click menu still works."
+  },
+  "optMinSize": {
+    "message": "Minimum file size"
+  },
+  "optMinSizeDesc": {
+    "message": "Files smaller than this (when the size is known) stay in the browser. 0 intercepts everything."
+  },
+  "optExcluded": {
+    "message": "Excluded sites"
+  },
+  "optExcludedDesc": {
+    "message": "Downloads from these sites (and their subdomains) always stay in the browser."
+  },
+  "optExcludedPlaceholder": {
+    "message": "e.g. example.com"
+  },
+  "optAdd": {
+    "message": "Add"
+  },
+  "optExcludedEmpty": {
+    "message": "No sites excluded."
+  },
+  "optRemove": {
+    "message": "Remove"
+  },
+  "optInvalidSite": {
+    "message": "That doesn't look like a site. Enter a domain such as example.com."
+  },
+  "optAppearance": {
+    "message": "Appearance & notifications"
+  },
+  "optNotify": {
+    "message": "Notify when sent to PGet"
+  },
+  "optNotifyDesc": {
+    "message": "The ✓ badge on the toolbar icon is always shown. Errors and pairing prompts are not affected."
+  },
+  "optTheme": {
+    "message": "Theme"
+  },
+  "optThemeSystem": {
+    "message": "System"
+  },
+  "optThemeLight": {
+    "message": "Light"
+  },
+  "optThemeDark": {
+    "message": "Dark"
+  },
+  "optAbout": {
+    "message": "About"
+  },
+  "optPrivacyNote": {
+    "message": "The PGet extension only talks to PGet on this computer (127.0.0.1). It never sends data to external servers and has no analytics or tracking."
+  },
+  "optPrivacyLink": {
+    "message": "Privacy policy"
+  },
+  "optVersion": {
+    "message": "Extension version $ARG$",
+    "placeholders": {
+      "arg": {
+        "content": "$1"
+      }
+    }
+  },
+  "optSaved": {
+    "message": "Saved"
+  }
+}

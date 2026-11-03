@@ -1,0 +1,54 @@
+# Browser extension package
+# -------------------------
+# Push a tag `ext-vX.Y.Z` (matching extension/manifest.json "version"), or run
+# manually. Checks the translations and produces a zip ready to upload to the
+# Chrome Web Store / Edge Add-ons dashboard (upload is done by hand for now).
+# The zip excludes dev-only files: extension/scripts/ and Markdown files.
+
+name: Extension
+
+on:
+  push:
+    tags: ['ext-v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Check translations (_locales)
+        run: node extension/scripts/check-i18n.mjs
+
+      - name: Read version
+        id: v
+        run: |
+          v=$(node -p "require('./extension/manifest.json').version")
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+          if [ "${GITHUB_REF_TYPE}" = "tag" ] && [ "ext-v$v" != "${GITHUB_REF_NAME}" ]; then
+            echo "::error::Tag ${GITHUB_REF_NAME} does not match manifest version $v"; exit 1
+          fi
+
+      - name: Zip
+        run: |
+          mkdir -p dist
+          cd extension
+          zip -r -X "../dist/pget-extension-${{ steps.v.outputs.version }}.zip" . \
+            -x 'scripts/*' '*.md' '.*' '*/.*'
+          cd ..
+          unzip -l "dist/pget-extension-${{ steps.v.outputs.version }}.zip"
+          sha256sum dist/*.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pget-extension-${{ steps.v.outputs.version }}
+          path: dist/pget-extension-*.zip
+          if-no-files-found: error

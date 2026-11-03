@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PGet</title>
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/popup.css">
+</head>
+<body>
+  <main class="popup">
+    <header class="brand">
+      <img src="icons/icon.svg" alt="">
+      <span class="brand-name">PGet<span class="dot">.</span></span>
+      <span class="spacer"></span>
+      <button id="refresh" class="icon-btn" data-i18n-title="popupRefresh" data-i18n-aria-label="popupRefresh">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/></svg>
+      </button>
+    </header>
+
+    <section class="card status-card">
+      <div class="row">
+        <span id="status" class="status checking" data-i18n="statusChecking"></span>
+        <span id="version" class="muted small"></span>
+      </div>
+      <p id="statusHint" class="hint muted"></p>
+      <button id="pair" class="primary wide" hidden data-i18n="popupPair"></button>
+    </section>
+
+    <section class="card toggle-card">
+      <label class="toggle-row" for="paused">
+        <span>
+          <span class="label" data-i18n="popupPauseLabel"></span>
+          <span class="sub muted" data-i18n="popupPauseHint"></span>
+        </span>
+        <span class="switch"><input id="paused" type="checkbox" role="switch"><span></span></span>
+      </label>
+    </section>
+
+    <footer class="links">
+      <a href="#" id="openOptions" data-i18n="popupOptions"></a>
+      <a href="https://pget.pg72.tw" target="_blank" rel="noopener" data-i18n="popupWebsite"></a>
+    </footer>
+  </main>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

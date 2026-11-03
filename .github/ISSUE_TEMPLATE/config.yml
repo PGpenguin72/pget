@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 官網與使用說明 / Website & help
+    url: https://pget.pg72.tw
+    about: 下載、常見問題與隱私權政策 / Downloads, FAQ and privacy policy.
+  - name: 安全性問題（請勿公開）/ Security vulnerability (private)
+    url: https://github.com/PGpenguin72/pget/security/advisories/new
+    about: 請透過 GitHub Security Advisories 私下回報，不要開公開 issue。/ Report privately via GitHub Security Advisories, not a public issue.
+  - name: 其他事務 / Other matters
+    url: mailto:developer@pg72.tw
+    about: 錯誤與建議請開 issue；其他事情（合作、授權等）寄信到 developer@pg72.tw。/ Bugs & ideas go in issues; anything else to developer@pg72.tw.

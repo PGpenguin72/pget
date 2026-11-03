@@ -1,0 +1,26 @@
+PGet patch for aria2 1.37.0
+- Raise --max-connection-per-server cap from 16 to 128.
+- Lower --min-split-size minimum from 1M to 1K (default stays 20M).
+Apply from the aria2 source root with: patch -p1 < aria2-max-connection.patch
+
+diff --git a/src/OptionHandlerFactory.cc b/src/OptionHandlerFactory.cc
+--- a/src/OptionHandlerFactory.cc
++++ b/src/OptionHandlerFactory.cc
+@@ -440,7 +440,7 @@ std::vector<OptionHandler*> OptionHandlerFactory::createOptionHandlers()
+   {
+     OptionHandler* op(new NumberOptionHandler(PREF_MAX_CONNECTION_PER_SERVER,
+                                               TEXT_MAX_CONNECTION_PER_SERVER,
+-                                              "1", 1, 16, 'x'));
++                                              "1", 1, 128, 'x'));
+     op->addTag(TAG_BASIC);
+     op->addTag(TAG_FTP);
+     op->addTag(TAG_HTTP);
+@@ -501,7 +501,7 @@ std::vector<OptionHandler*> OptionHandlerFactory::createOptionHandlers()
+   }
+   {
+     OptionHandler* op(new UnitNumberOptionHandler(
+-        PREF_MIN_SPLIT_SIZE, TEXT_MIN_SPLIT_SIZE, "20M", 1_m, 1_g, 'k'));
++        PREF_MIN_SPLIT_SIZE, TEXT_MIN_SPLIT_SIZE, "20M", 1_k, 1_g, 'k'));
+     op->addTag(TAG_BASIC);
+     op->addTag(TAG_FTP);
+     op->addTag(TAG_HTTP);

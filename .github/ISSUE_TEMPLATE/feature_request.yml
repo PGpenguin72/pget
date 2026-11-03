@@ -1,0 +1,35 @@
+name: 功能建議 / Feature request
+description: 想到 PGet 可以更好的地方 / An idea to make PGet better
+labels: ['enhancement']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        謝謝你的點子！提醒一下：PGet **不會**加入遙測、廣告、帳號系統或任何第三方 SDK。
+        Thanks for the idea! Note: PGet will **not** add telemetry, ads, accounts or third-party SDKs.
+  - type: textarea
+    id: problem
+    attributes:
+      label: 想解決什麼問題？/ What problem does it solve?
+      placeholder: 每次我要…的時候，都很麻煩 / I'm always frustrated when…
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: 你希望怎麼做？/ What would you like to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 考慮過的替代方案 / Alternatives considered
+  - type: dropdown
+    id: component
+    attributes:
+      label: 哪個部分？/ Which part?
+      options:
+        - 桌面程式 / Desktop app
+        - 瀏覽器擴充功能 / Browser extension
+        - 官網 / Website
+        - 其他 / Other

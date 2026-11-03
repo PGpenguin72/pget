@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PGet</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <img src="../assets/icon.svg" alt="" width="32" height="32">
+        <div>
+          <div class="brand-name">PGet</div>
+          <div class="brand-sub" data-i18n="app.tagline"></div>
+        </div>
+      </div>
+      <nav class="nav" id="nav">
+        <button class="nav-item active" data-filter="all"><span class="ico" data-icon="list"></span><span data-i18n="nav.all"></span><span class="count" data-count="all"></span></button>
+        <button class="nav-item" data-filter="downloading"><span class="ico" data-icon="down"></span><span data-i18n="nav.downloading"></span><span class="count" data-count="downloading"></span></button>
+        <button class="nav-item" data-filter="completed"><span class="ico" data-icon="check"></span><span data-i18n="nav.completed"></span><span class="count" data-count="completed"></span></button>
+        <button class="nav-item" data-filter="failed"><span class="ico" data-icon="alert"></span><span data-i18n="nav.failed"></span><span class="count" data-count="failed"></span></button>
+      </nav>
+      <div class="sidebar-foot">
+        <div class="speed-card">
+          <div class="speed-label" data-i18n="toolbar.totalSpeed"></div>
+          <div class="speed-value" id="totalSpeed">0 B/s</div>
+        </div>
+        <button class="nav-item" id="openSettings" data-view="settings"><span class="ico" data-icon="gear"></span><span data-i18n="nav.settings"></span></button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <!-- 下載清單 -->
+      <section class="view" id="viewTasks">
+        <header class="toolbar">
+          <button class="btn primary" id="btnAdd"><span class="ico" data-icon="plus"></span><span data-i18n="toolbar.add"></span></button>
+          <button class="btn" id="btnTorrent"><span class="ico" data-icon="file"></span><span data-i18n="toolbar.torrent"></span></button>
+          <div class="spacer"></div>
+          <button class="btn ghost" id="btnResumeAll" data-i18n-title="toolbar.resumeAll"><span class="ico" data-icon="play"></span><span data-i18n="toolbar.resumeAll"></span></button>
+          <button class="btn ghost" id="btnPauseAll" data-i18n-title="toolbar.pauseAll"><span class="ico" data-icon="pause"></span><span data-i18n="toolbar.pauseAll"></span></button>
+          <button class="btn ghost" id="btnClear" data-i18n-title="toolbar.clearCompleted"><span class="ico" data-icon="broom"></span><span data-i18n="toolbar.clearCompleted"></span></button>
+        </header>
+
+        <div class="banner warn hidden" id="engineBanner" role="status">
+          <span class="ico" data-icon="alert"></span>
+          <div>
+            <strong data-i18n="engine.missingTitle"></strong>
+            <p id="engineBannerText"></p>
+            <p class="muted"><span data-i18n="engine.howto"></span> <code>node scripts/fetch-engines.mjs</code></p>
+          </div>
+        </div>
+        <div class="banner info hidden" id="updateBanner" role="status">
+          <span class="ico" data-icon="gift"></span>
+          <div id="updateText"></div>
+          <button class="btn small" id="updateView" data-i18n="update.view"></button>
+          <button class="icon-btn" id="updateClose" data-i18n-title="common.close"><span class="ico" data-icon="x"></span></button>
+        </div>
+
+        <div class="task-list" id="taskList" role="list"></div>
+        <div class="empty hidden" id="emptyState">
+          <img src="../assets/icon.svg" alt="" width="96" height="96">
+          <h2 data-i18n="empty.title"></h2>
+          <p data-i18n="empty.hint"></p>
+        </div>
+      </section>
+
+      <!-- 設定 -->
+      <section class="view hidden" id="viewSettings">
+        <header class="toolbar">
+          <button class="btn ghost" id="btnBack"><span class="ico" data-icon="back"></span><span data-i18n="common.back"></span></button>
+          <h1 class="view-title" data-i18n="settings.title"></h1>
+        </header>
+        <div class="settings" id="settingsForm">
+          <section class="card">
+            <h2 data-i18n="settings.downloads"></h2>
+            <label class="row">
+              <span class="row-label" data-i18n="settings.downloadDir"></span>
+              <span class="row-control folder">
+                <input type="text" id="setDir" readonly>
+                <button class="btn" id="setDirBrowse" data-i18n="common.browse"></button>
+              </span>
+            </label>
+            <label class="row">
+              <span class="row-label"><span data-i18n="settings.connections"></span><small class="hint" id="connHint"></small></span>
+              <span class="row-control range">
+                <input type="range" id="setConn" min="1" max="128" step="1">
+                <output id="setConnOut"></output>
+              </span>
+            </label>
+            <label class="row">
+              <span class="row-label" data-i18n="settings.maxConcurrent"></span>
+              <span class="row-control"><input type="number" id="setConcurrent" min="1" max="20"></span>
+            </label>
+            <label class="row">
+              <span class="row-label"><span data-i18n="settings.speedLimit"></span><small class="hint" data-i18n="settings.speedLimitHint"></small></span>
+              <span class="row-control unit"><input type="number" id="setSpeed" min="0" step="100"><em>KB/s</em></span>
+            </label>
+            <label class="row">
+              <span class="row-label" data-i18n="settings.videoQuality"></span>
+              <span class="row-control"><select id="setQuality"></select></span>
+            </label>
+          </section>
+
+          <section class="card">
+            <h2 data-i18n="settings.appearance"></h2>
+            <div class="row">
+              <span class="row-label" data-i18n="settings.theme"></span>
+              <span class="row-control segmented" id="setTheme">
+                <button data-value="system" data-i18n="theme.system"></button>
+                <button data-value="light" data-i18n="theme.light"></button>
+                <button data-value="dark" data-i18n="theme.dark"></button>
+              </span>
+            </div>
+            <label class="row">
+              <span class="row-label" data-i18n="settings.language"></span>
+              <span class="row-control">
+                <select id="setLang">
+                  <option value="auto" data-i18n="language.auto"></option>
+                  <option value="zh-TW">繁體中文</option>
+                  <option value="en">English</option>
+                  <option value="zh-CN">简体中文</option>
+                  <option value="ja">日本語</option>
+                  <option value="ko">한국어</option>
+                </select>
+              </span>
+            </label>
+          </section>
+
+          <section class="card">
+            <h2 data-i18n="settings.general"></h2>
+            <label class="row switch-row">
+              <span class="row-label"><span data-i18n="settings.startAtLogin"></span><small class="hint hidden" id="loginHint" data-i18n="settings.startAtLoginLinux"></small></span>
+              <input type="checkbox" class="switch" id="setLogin">
+            </label>
+            <label class="row switch-row">
+              <span class="row-label" data-i18n="settings.minimizeToTray"></span>
+              <input type="checkbox" class="switch" id="setTray">
+            </label>
+            <label class="row switch-row">
+              <span class="row-label" data-i18n="settings.notifyOnComplete"></span>
+              <input type="checkbox" class="switch" id="setNotify">
+            </label>
+            <label class="row switch-row">
+              <span class="row-label"><span data-i18n="settings.focusOnAdd"></span><small class="hint" data-i18n="settings.focusOnAddHint"></small></span>
+              <input type="checkbox" class="switch" id="setFocus">
+            </label>
+            <label class="row switch-row">
+              <span class="row-label"><span data-i18n="settings.checkUpdates"></span><small class="hint" data-i18n="settings.checkUpdatesHint"></small></span>
+              <input type="checkbox" class="switch" id="setUpdates">
+            </label>
+            <div class="row">
+              <span class="row-label muted" id="updateStatus"></span>
+              <button class="btn" id="btnCheckNow" data-i18n="settings.checkNow"></button>
+            </div>
+          </section>
+
+          <section class="card">
+            <h2 data-i18n="settings.extensions"></h2>
+            <p class="muted small" id="serverInfo"></p>
+            <ul class="clients" id="clientList"></ul>
+          </section>
+
+          <section class="card">
+            <h2 data-i18n="settings.engines"></h2>
+            <ul class="engines" id="engineList"></ul>
+          </section>
+
+          <section class="card about">
+            <img src="../assets/icon.svg" alt="" width="56" height="56">
+            <div>
+              <h2>PGet <span class="muted" id="aboutVersion"></span></h2>
+              <p data-i18n="settings.aboutText"></p>
+              <p class="muted small" data-i18n="settings.noTelemetry"></p>
+              <p class="links">
+                <button class="link" id="linkHome">pget.pg72.tw</button>
+                <button class="link" id="linkRepo">GitHub</button>
+                <span class="muted small">MIT License</span>
+              </p>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 新增下載 -->
+  <dialog id="addDialog" class="dialog wide">
+    <form method="dialog" id="addForm">
+      <h2 data-i18n="add.title"></h2>
+      <label class="field">
+        <span data-i18n="add.urls"></span>
+        <textarea id="addUrls" rows="5" spellcheck="false" data-i18n-placeholder="add.urlsPlaceholder"></textarea>
+      </label>
+      <div class="chips" id="addTorrents"></div>
+      <div class="video-box hidden" id="videoBox">
+        <div class="video-head">
+          <span class="ico" data-icon="video"></span>
+          <span id="videoTitle" data-i18n="add.videoDetected"></span>
+          <button type="button" class="btn small" id="btnProbe" data-i18n="add.probe"></button>
+        </div>
+        <label class="field inline">
+          <span data-i18n="add.quality"></span>
+          <select id="addQuality"></select>
+        </label>
+      </div>
+      <label class="field">
+        <span data-i18n="add.dir"></span>
+        <span class="folder">
+          <input type="text" id="addDir" spellcheck="false">
+          <button type="button" class="btn" id="addDirBrowse" data-i18n="common.browse"></button>
+        </span>
+      </label>
+      <div class="grid3">
+        <label class="field">
+          <span data-i18n="add.connections"></span>
+          <input type="number" id="addConn" min="1" max="128">
+        </label>
+        <label class="field">
+          <span data-i18n="add.speedLimit"></span>
+          <span class="unit"><input type="number" id="addSpeed" min="0" step="100" value="0"><em>KB/s</em></span>
+        </label>
+        <label class="field">
+          <span data-i18n="add.filename"></span>
+          <input type="text" id="addName" spellcheck="false" data-i18n-placeholder="add.filenameHint">
+        </label>
+      </div>
+      <p class="error-text hidden" id="addError"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn ghost" id="addPickTorrent"><span class="ico" data-icon="file"></span><span data-i18n="toolbar.torrent"></span></button>
+        <div class="spacer"></div>
+        <button type="button" class="btn" id="addCancel" data-i18n="common.cancel"></button>
+        <button type="submit" class="btn primary" id="addSubmit" data-i18n="add.start"></button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- 移除確認 -->
+  <dialog id="removeDialog" class="dialog">
+    <form method="dialog">
+      <h2 data-i18n="remove.title"></h2>
+      <p id="removeMsg"></p>
+      <label class="check"><input type="checkbox" id="removeFiles"><span data-i18n="remove.deleteFiles"></span></label>
+      <div class="dialog-actions">
+        <div class="spacer"></div>
+        <button type="button" class="btn" id="removeCancel" data-i18n="common.cancel"></button>
+        <button type="submit" class="btn danger" id="removeOk" data-i18n="remove.confirm"></button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="drop-overlay hidden" id="dropOverlay"><div><span class="ico big" data-icon="down"></span><p data-i18n="add.dropHint"></p></div></div>
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

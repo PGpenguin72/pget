@@ -1,0 +1,15 @@
+{
+  // PGet 官網：純靜態資產的 Cloudflare Worker（沒有 main）
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pget-site",
+  "account_id": "9e1e36d2ce92a214f3e9dbb96b0be9d2",
+  "compatibility_date": "2026-10-06",
+  "assets": {
+    "directory": "./public",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  },
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [{ "pattern": "pget.pg72.tw", "custom_domain": true }]
+}

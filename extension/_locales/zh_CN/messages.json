@@ -1,0 +1,206 @@
+{
+  "extName": {
+    "message": "PGet 下载接手"
+  },
+  "extDescription": {
+    "message": "把浏览器的下载交给本机的 PGet 多线程下载器，连登录状态一起带过去。开源、无追踪，数据只发送到 127.0.0.1。"
+  },
+  "actionTitle": {
+    "message": "PGet"
+  },
+  "menuDownloadLink": {
+    "message": "用 PGet 下载链接"
+  },
+  "menuDownloadMedia": {
+    "message": "用 PGet 下载"
+  },
+  "menuDownloadPageVideo": {
+    "message": "用 PGet 下载视频（此页）"
+  },
+  "notifySentTitle": {
+    "message": "已交给 PGet"
+  },
+  "notifySentBody": {
+    "message": "$ARG$ 正在用 PGet 下载",
+    "placeholders": {
+      "arg": {
+        "content": "$1"
+      }
+    }
+  },
+  "notifyUnnamedFile": {
+    "message": "文件"
+  },
+  "notifyPairTitle": {
+    "message": "需要重新配对 PGet"
+  },
+  "notifyPairBody": {
+    "message": "这次的下载已交回浏览器。点这里打开设置并重新配对。"
+  },
+  "notifyErrorTitle": {
+    "message": "无法交给 PGet"
+  },
+  "notifyNotRunningBody": {
+    "message": "PGet 好像没有打开。打开 PGet 之后再试一次；能用浏览器下载的已改由浏览器下载。"
+  },
+  "notifyErrorBody": {
+    "message": "和 PGet 连接时出了问题；能用浏览器下载的已改由浏览器下载。"
+  },
+  "notifyUnsupportedBody": {
+    "message": "这个链接 PGet 处理不了（只支持 http、https 与 magnet）。"
+  },
+  "statusChecking": {
+    "message": "检查中…"
+  },
+  "statusConnected": {
+    "message": "已连接"
+  },
+  "statusNotRunning": {
+    "message": "PGet 没有在运行"
+  },
+  "statusNotPaired": {
+    "message": "尚未配对"
+  },
+  "statusNotRunningHint": {
+    "message": "打开桌面版 PGet 后就会自动连上。在那之前，下载照常由浏览器处理。"
+  },
+  "statusNotPairedHint": {
+    "message": "按“配对”后，到 PGet 窗口点允许，之后下载就会自动交给 PGet。"
+  },
+  "popupRefresh": {
+    "message": "重新检查"
+  },
+  "popupPair": {
+    "message": "配对"
+  },
+  "popupPauseLabel": {
+    "message": "暂停拦截"
+  },
+  "popupPauseHint": {
+    "message": "开启时下载一律交给浏览器"
+  },
+  "popupOptions": {
+    "message": "设置"
+  },
+  "popupWebsite": {
+    "message": "PGet 官网"
+  },
+  "popupAppVersion": {
+    "message": "PGet $ARG$",
+    "placeholders": {
+      "arg": {
+        "content": "$1"
+      }
+    }
+  },
+  "pairWaiting": {
+    "message": "等待 PGet 允许…"
+  },
+  "pairWaitingHint": {
+    "message": "请到 PGet 窗口点“允许”（60 秒内）。"
+  },
+  "pairDenied": {
+    "message": "PGet 拒绝了配对，或等待超时。"
+  },
+  "pairFailed": {
+    "message": "配对失败，请确认 PGet 正在运行后再试一次。"
+  },
+  "pairSuccess": {
+    "message": "配对成功"
+  },
+  "optionsTitle": {
+    "message": "PGet 设置"
+  },
+  "optionsHeading": {
+    "message": "扩展设置"
+  },
+  "optConnection": {
+    "message": "连接"
+  },
+  "optForget": {
+    "message": "忘记配对"
+  },
+  "optForgetConfirm": {
+    "message": "确定要忘记配对吗？之后下载会交给浏览器，直到重新配对。"
+  },
+  "optForgotten": {
+    "message": "已忘记配对"
+  },
+  "optRepair": {
+    "message": "重新配对"
+  },
+  "optInterception": {
+    "message": "拦截下载"
+  },
+  "optPauseDesc": {
+    "message": "开启后扩展不会拦截任何下载；右键菜单仍可使用。"
+  },
+  "optMinSize": {
+    "message": "最小文件大小"
+  },
+  "optMinSizeDesc": {
+    "message": "比这个小的文件（大小已知时）留给浏览器下载。设为 0 表示全部拦截。"
+  },
+  "optExcluded": {
+    "message": "不拦截的网站"
+  },
+  "optExcludedDesc": {
+    "message": "这些网站（含子域名）的下载一律交给浏览器。"
+  },
+  "optExcludedPlaceholder": {
+    "message": "例如 example.com"
+  },
+  "optAdd": {
+    "message": "添加"
+  },
+  "optExcludedEmpty": {
+    "message": "目前没有排除任何网站。"
+  },
+  "optRemove": {
+    "message": "移除"
+  },
+  "optInvalidSite": {
+    "message": "看不懂这个网址，请输入像 example.com 的域名。"
+  },
+  "optAppearance": {
+    "message": "外观与通知"
+  },
+  "optNotify": {
+    "message": "交给 PGet 时显示通知"
+  },
+  "optNotifyDesc": {
+    "message": "工具栏图标上的 ✓ 标记会一直显示。错误与配对提醒不受这个开关影响。"
+  },
+  "optTheme": {
+    "message": "主题"
+  },
+  "optThemeSystem": {
+    "message": "跟随系统"
+  },
+  "optThemeLight": {
+    "message": "浅色"
+  },
+  "optThemeDark": {
+    "message": "深色"
+  },
+  "optAbout": {
+    "message": "关于"
+  },
+  "optPrivacyNote": {
+    "message": "PGet 扩展只会和这台电脑上的 PGet（127.0.0.1）通信，不会把任何数据发送到外部服务器，也没有任何分析或追踪。"
+  },
+  "optPrivacyLink": {
+    "message": "隐私政策"
+  },
+  "optVersion": {
+    "message": "扩展版本 $ARG$",
+    "placeholders": {
+      "arg": {
+        "content": "$1"
+      }
+    }
+  },
+  "optSaved": {
+    "message": "已保存"
+  }
+}

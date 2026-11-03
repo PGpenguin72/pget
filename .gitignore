@@ -1,0 +1,17 @@
+node_modules/
+dist/
+out/
+
+# 下載下來的引擎（aria2c / yt-dlp）不進版控，用 scripts/fetch-engines.mjs 重新抓
+.engines-dl/
+app/bin/
+
+# Cloudflare
+site/.wrangler/
+
+.DS_Store
+Thumbs.db
+*.log
+
+# 官網產生的頁面（CI 會用 site/build.mjs 重新產生）
+site/public/

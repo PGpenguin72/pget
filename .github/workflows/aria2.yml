@@ -1,0 +1,142 @@
+# Patched aria2 for macOS & Linux
+# ---------------------------------
+# Builds aria2 1.37.0 from source with ci/aria2-max-connection.patch
+# (max-connection-per-server cap 16 -> 128, min-split-size minimum 1M -> 1K)
+# and publishes the binaries as a GitHub Release named `aria2-1.37.0-pget.N`.
+# Windows uses myfreeer's prebuilt patched aria2, so it is not built here.
+#
+# Trigger:
+#   - push a tag like `aria2-1.37.0-pget.1`, or
+#   - Actions -> "aria2 (patched)" -> Run workflow, enter N (creates the tag).
+#
+# Assets (consumed by scripts/fetch-engines.mjs via ARIA2_URL in release.yml):
+#   aria2c-linux-x64.tar.gz   aria2c-linux-arm64.tar.gz
+#   aria2c-macos-x64.tar.gz   aria2c-macos-arm64.tar.gz
+#   SHA256SUMS
+# Each tarball contains `aria2c-<platform>/{aria2c,COPYING,SOURCE.txt,aria2-max-connection.patch}`
+# (GPL-2.0: the licence, upstream source link and our patch travel with the binary).
+#
+# The actual build logic lives in ci/build-aria2-*.sh so it can be run and
+# debugged locally; source tarballs are pinned + hash-checked in ci/aria2-versions.env.
+
+name: aria2 (patched)
+
+on:
+  push:
+    tags: ['aria2-*-pget.*']
+  workflow_dispatch:
+    inputs:
+      pget_rev:
+        description: 'Build number N for the release tag aria2-1.37.0-pget.N'
+        required: true
+        default: '1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aria2-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux-x64
+            runner: ubuntu-24.04
+            os: linux
+            arch: x64
+          - platform: linux-arm64
+            runner: ubuntu-24.04-arm   # free GitHub-hosted arm64 runner (public repos)
+            os: linux
+            arch: arm64
+          - platform: macos-x64
+            # Intel runner. If this label is retired, cross-compile on an arm64
+            # runner instead (CFLAGS/LDFLAGS "-arch x86_64", --host=x86_64-apple-darwin).
+            runner: macos-15-intel
+            os: macos
+            arch: x64
+          - platform: macos-arm64
+            runner: macos-15
+            os: macos
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+
+      # Linux: build inside Alpine (musl) to get a fully static binary that runs
+      # on any distro. We use `docker run` instead of `container:` because
+      # JavaScript actions don't run in Alpine containers on arm64 runners.
+      - name: Build (Linux, static musl)
+        if: matrix.os == 'linux'
+        run: |
+          docker run --rm -v "$GITHUB_WORKSPACE:/repo" -w /repo alpine:3.22 \
+            sh ci/build-aria2-linux.sh ${{ matrix.arch }}
+
+      - name: Build (macOS, AppleTLS)
+        if: matrix.os == 'macos'
+        run: sh ci/build-aria2-macos.sh ${{ matrix.arch }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aria2c-${{ matrix.platform }}
+          path: dist-aria2/aria2c-${{ matrix.platform }}.tar.gz
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write   # create the release / tag
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Work out tag
+        id: tag
+        run: |
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            tag="${GITHUB_REF_NAME}"
+          else
+            version=$(grep '^ARIA2_VERSION=' ci/aria2-versions.env | cut -d= -f2)
+            n='${{ inputs.pget_rev }}'
+            case "$n" in ''|*[!0-9]*) echo "pget_rev must be a number" >&2; exit 1;; esac
+            tag="aria2-${version}-pget.${n}"
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: assets
+          pattern: aria2c-*
+          merge-multiple: true
+
+      - name: SHA256SUMS
+        working-directory: assets
+        run: |
+          sha256sum aria2c-*.tar.gz > SHA256SUMS
+          cat SHA256SUMS
+
+      - name: Create or update release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          cat > notes.md <<NOTES
+          Patched [aria2](https://github.com/aria2/aria2) build used by PGet on macOS and Linux.
+
+          - Based on aria2 1.37.0 (GPL-2.0-or-later). Source: https://github.com/aria2/aria2/releases/tag/release-1.37.0
+          - Patch: [ci/aria2-max-connection.patch](https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_SHA}/ci/aria2-max-connection.patch)
+            raises \`--max-connection-per-server\` to 128 and lowers the \`--min-split-size\` minimum to 1K.
+          - Build scripts: https://github.com/${GITHUB_REPOSITORY}/tree/${GITHUB_SHA}/ci
+          - Linux: fully static (musl). macOS: AppleTLS, system zlib/SQLite only. SFTP (libssh2) is Linux-only.
+          NOTES
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" assets/* --clobber
+          else
+            gh release create "$TAG" assets/* \
+              --target "$GITHUB_SHA" --title "$TAG" --notes-file notes.md --prerelease
+          fi

@@ -1,0 +1,206 @@
+{
+  "extName": {
+    "message": "PGet ダウンロードキャッチャー"
+  },
+  "extDescription": {
+    "message": "ブラウザのダウンロードをPC上のマルチ接続ダウンローダー PGet に引き渡します。オープンソース、追跡なし、通信は 127.0.0.1 のみ。"
+  },
+  "actionTitle": {
+    "message": "PGet"
+  },
+  "menuDownloadLink": {
+    "message": "PGet でリンクをダウンロード"
+  },
+  "menuDownloadMedia": {
+    "message": "PGet でダウンロード"
+  },
+  "menuDownloadPageVideo": {
+    "message": "このページの動画を PGet でダウンロード"
+  },
+  "notifySentTitle": {
+    "message": "PGet に送信しました"
+  },
+  "notifySentBody": {
+    "message": "$ARG$ を PGet でダウンロード中です",
+    "placeholders": {
+      "arg": {
+        "content": "$1"
+      }
+    }
+  },
+  "notifyUnnamedFile": {
+    "message": "ファイル"
+  },
+  "notifyPairTitle": {
+    "message": "PGet とのペアリングが必要です"
+  },
+  "notifyPairBody": {
+    "message": "今回のダウンロードはブラウザで続行します。クリックして設定を開き、再度ペアリングしてください。"
+  },
+  "notifyErrorTitle": {
+    "message": "PGet に送信できませんでした"
+  },
+  "notifyNotRunningBody": {
+    "message": "PGet が起動していないようです。起動してからもう一度お試しください。可能な場合はブラウザでダウンロードしています。"
+  },
+  "notifyErrorBody": {
+    "message": "PGet との通信で問題が発生しました。可能な場合はブラウザでダウンロードしています。"
+  },
+  "notifyUnsupportedBody": {
+    "message": "このリンクは PGet で扱えません（http・https・magnet のみ対応）。"
+  },
+  "statusChecking": {
+    "message": "確認中…"
+  },
+  "statusConnected": {
+    "message": "接続済み"
+  },
+  "statusNotRunning": {
+    "message": "PGet が起動していません"
+  },
+  "statusNotPaired": {
+    "message": "未ペアリング"
+  },
+  "statusNotRunningHint": {
+    "message": "PGet デスクトップアプリを起動すると自動で接続します。それまではブラウザが通常どおりダウンロードします。"
+  },
+  "statusNotPairedHint": {
+    "message": "「ペアリング」を押して PGet の画面で許可すると、以後のダウンロードは PGet に引き渡されます。"
+  },
+  "popupRefresh": {
+    "message": "再確認"
+  },
+  "popupPair": {
+    "message": "ペアリング"
+  },
+  "popupPauseLabel": {
+    "message": "キャッチを一時停止"
+  },
+  "popupPauseHint": {
+    "message": "オンの間はすべてブラウザでダウンロード"
+  },
+  "popupOptions": {
+    "message": "設定"
+  },
+  "popupWebsite": {
+    "message": "PGet 公式サイト"
+  },
+  "popupAppVersion": {
+    "message": "PGet $ARG$",
+    "placeholders": {
+      "arg": {
+        "content": "$1"
+      }
+    }
+  },
+  "pairWaiting": {
+    "message": "PGet の許可を待っています…"
+  },
+  "pairWaitingHint": {
+    "message": "PGet の画面で「許可」を押してください（60 秒以内）。"
+  },
+  "pairDenied": {
+    "message": "PGet で拒否されたか、タイムアウトしました。"
+  },
+  "pairFailed": {
+    "message": "ペアリングに失敗しました。PGet が起動しているか確認して再試行してください。"
+  },
+  "pairSuccess": {
+    "message": "ペアリングしました"
+  },
+  "optionsTitle": {
+    "message": "PGet 設定"
+  },
+  "optionsHeading": {
+    "message": "拡張機能の設定"
+  },
+  "optConnection": {
+    "message": "接続"
+  },
+  "optForget": {
+    "message": "ペアリングを解除"
+  },
+  "optForgetConfirm": {
+    "message": "ペアリングを解除しますか？再度ペアリングするまでブラウザでダウンロードします。"
+  },
+  "optForgotten": {
+    "message": "ペアリングを解除しました"
+  },
+  "optRepair": {
+    "message": "再ペアリング"
+  },
+  "optInterception": {
+    "message": "ダウンロードのキャッチ"
+  },
+  "optPauseDesc": {
+    "message": "オンの間はダウンロードをキャッチしません。右クリックメニューは使えます。"
+  },
+  "optMinSize": {
+    "message": "最小ファイルサイズ"
+  },
+  "optMinSizeDesc": {
+    "message": "これより小さいファイル（サイズが分かる場合）はブラウザでダウンロードします。0 ですべてキャッチします。"
+  },
+  "optExcluded": {
+    "message": "除外するサイト"
+  },
+  "optExcludedDesc": {
+    "message": "これらのサイト（サブドメインを含む）のダウンロードは常にブラウザで行います。"
+  },
+  "optExcludedPlaceholder": {
+    "message": "例：example.com"
+  },
+  "optAdd": {
+    "message": "追加"
+  },
+  "optExcludedEmpty": {
+    "message": "除外しているサイトはありません。"
+  },
+  "optRemove": {
+    "message": "削除"
+  },
+  "optInvalidSite": {
+    "message": "サイトとして認識できません。example.com のようなドメインを入力してください。"
+  },
+  "optAppearance": {
+    "message": "外観と通知"
+  },
+  "optNotify": {
+    "message": "PGet に送信したら通知"
+  },
+  "optNotifyDesc": {
+    "message": "ツールバーアイコンの ✓ バッジは常に表示されます。エラーとペアリングの通知には影響しません。"
+  },
+  "optTheme": {
+    "message": "テーマ"
+  },
+  "optThemeSystem": {
+    "message": "システム"
+  },
+  "optThemeLight": {
+    "message": "ライト"
+  },
+  "optThemeDark": {
+    "message": "ダーク"
+  },
+  "optAbout": {
+    "message": "情報"
+  },
+  "optPrivacyNote": {
+    "message": "PGet 拡張機能はこのPC上の PGet（127.0.0.1）とだけ通信します。外部サーバーにデータを送ることはなく、分析や追跡も一切ありません。"
+  },
+  "optPrivacyLink": {
+    "message": "プライバシーポリシー"
+  },
+  "optVersion": {
+    "message": "拡張機能バージョン $ARG$",
+    "placeholders": {
+      "arg": {
+        "content": "$1"
+      }
+    }
+  },
+  "optSaved": {
+    "message": "保存しました"
+  }
+}

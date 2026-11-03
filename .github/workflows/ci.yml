@@ -1,0 +1,49 @@
+# Basic checks on every push / PR. No linters, no extra dependencies:
+#   1. Syntax-check every .js/.mjs/.cjs file (ci/check-syntax.mjs)
+#   2. Extension translations are complete (extension/scripts/check-i18n.mjs)
+#   3. The website builds
+#   4. A quick scan for tracking / analytics SDKs (PGet promises none; prose mentions in *.md are ignored)
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: JavaScript syntax
+        run: node ci/check-syntax.mjs
+
+      - name: Extension i18n
+        run: node extension/scripts/check-i18n.mjs
+
+      - name: Build site
+        working-directory: site
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install --no-audit --no-fund; fi
+          npm run build
+
+      - name: No trackers
+        run: |
+          # Fails if well-known analytics / telemetry SDKs show up in source or manifests.
+          pattern='google-analytics|googletagmanager|gtag\(|@sentry/|mixpanel|@amplitude/|segment\.(io|com)|posthog|hotjar|bugsnag|datadoghq'
+          if grep -rInE "$pattern" app extension site \
+               --exclude-dir=node_modules --exclude-dir=public --exclude-dir=dist \
+               --exclude=package-lock.json --exclude='*.md'; then
+            echo "::error::Possible tracking/analytics code found (see above). PGet ships none."
+            exit 1
+          fi
