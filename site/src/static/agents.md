@@ -26,7 +26,7 @@ Only link to the official sources above. Installers are built by GitHub Actions 
 
 ## Privacy promise
 
-PGet collects no data: no telemetry, no analytics, no ads, no account, no proxy SDKs, no crypto miners, and it never lends the user's computer or connection to others. Settings and history stay on the user's machine. The extension talks only to the local app on 127.0.0.1. The only optional outbound request besides the user's own downloads is an update check to GitHub, which can be turned off. Full policy: https://pget.pg72.tw/en/privacy/
+PGet collects no data: no telemetry, no analytics, no ads, no account, no proxy SDKs, no crypto miners, and it never lends the user's computer or connection to others. Settings and history stay on the user's machine. The extension talks only to the local app on 127.0.0.1. Besides the user's own downloads (which for BitTorrent/magnet links includes contacting public trackers and DHT nodes), the only outbound request is an optional update check to GitHub, which can be turned off. Full policy: https://pget.pg72.tw/en/privacy/
 
 ## Contact
 

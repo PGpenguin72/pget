@@ -41,6 +41,16 @@ function layout(code, page, title, desc, body) {
   <meta property="og:description" content="${esc(desc)}">
   <meta property="og:url" content="${SITE}/${dir(code)}${page}">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="PGet">
+  <meta property="og:locale" content="${code.replace('-', '_')}">
+  <meta property="og:image" content="${SITE}/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="PGet">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="${esc(title)}">
+  <meta name="twitter:description" content="${esc(desc)}">
+  <meta name="twitter:image" content="${SITE}/og.png">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#f7f9fc" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
