@@ -124,7 +124,7 @@ ${features}
 ${dl}
       </div>
       <p class="note">${L.dlNote}</p>
-      <p class="note"><a href="code-signing/">${t[code].nav.signing}</a></p>
+      <p class="note">Windows: free code signing provided by <a href="https://about.signpath.io">SignPath.io</a>, certificate by <a href="https://signpath.org">SignPath Foundation</a> · <a href="code-signing/">${t[code].nav.signing}</a></p>
     </section>
     <section class="why">
       <h2>${L.whyTitle}</h2>
