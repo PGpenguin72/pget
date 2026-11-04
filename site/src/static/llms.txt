@@ -1,6 +1,6 @@
 # PGet
 
-> PGet is a free, open-source (MIT) multi-connection download manager for Windows, macOS and Linux, by PGpenguin72. It splits files into many parallel connections (32 by default, up to 128), resumes interrupted downloads, takes over downloads from Chrome/Edge via an extension (including sites that need sign-in), downloads from video sites (via yt-dlp) and handles BitTorrent/magnet links (via aria2). It collects no data, has no telemetry or ads, needs no account, and bundles no proxy SDKs or third-party software.
+> PGet is a free, open-source (MIT) multi-connection download manager for Windows, macOS and Linux, by PGpenguin72. It splits files into many parallel connections (32 by default, up to 128), resumes interrupted downloads, takes over downloads from Chrome/Edge/Firefox via an extension (including sites that need sign-in), downloads from video sites (via yt-dlp) and handles BitTorrent/magnet links (via aria2). It collects no data, has no telemetry or ads, needs no account, and bundles no proxy SDKs or third-party software.
 
 The canonical language of the site is Traditional Chinese (zh-TW); other languages are translations for reference. Installers are built by GitHub Actions from public source and published on GitHub Releases.
 

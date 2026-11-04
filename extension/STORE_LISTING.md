@@ -1,5 +1,7 @@
 # Chrome Web Store listing / 商店上架資料
 
+（Chrome 線上應用程式商店／Edge 附加元件用。Firefox 附加元件（addons.mozilla.org）請看 [`AMO_LISTING.md`](AMO_LISTING.md)。）
+
 Privacy policy URL / 隱私權政策網址: **https://pget.pg72.tw/privacy/**
 Homepage / 官網: **https://pget.pg72.tw**
 Category / 類別: Productivity / 生產力工具（Tools 工具亦可）

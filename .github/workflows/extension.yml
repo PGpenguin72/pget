@@ -1,9 +1,12 @@
-# Browser extension package
-# -------------------------
+# Browser extension packages
+# --------------------------
 # Push a tag `ext-vX.Y.Z` (matching extension/manifest.json "version"), or run
-# manually. Checks the translations and produces a zip ready to upload to the
-# Chrome Web Store / Edge Add-ons dashboard (upload is done by hand for now).
-# The zip excludes dev-only files: extension/scripts/ and Markdown files.
+# manually. Checks the translations, builds the Chrome / Edge and Firefox copies
+# from the same source (extension/scripts/build.mjs: only manifest.json differs),
+# lints the Firefox copy with web-ext (must have 0 errors) and produces two zips:
+#   pget-extension-chrome-X.Y.Z.zip  -> Chrome Web Store / Edge Add-ons
+#   pget-extension-firefox-X.Y.Z.zip -> addons.mozilla.org (AMO_LISTING.md)
+# Upload is done by hand for now. Dev-only files (scripts/, *.md) are excluded.
 
 name: Extension
 
@@ -14,6 +17,9 @@ on:
 
 permissions:
   contents: read
+
+env:
+  WEB_EXT_VERSION: 10.8.0
 
 jobs:
   package:
@@ -37,14 +43,22 @@ jobs:
             echo "::error::Tag ${GITHUB_REF_NAME} does not match manifest version $v"; exit 1
           fi
 
+      - name: Build (chrome + firefox)
+        run: node extension/scripts/build.mjs chrome firefox
+
+      - name: Lint Firefox build (web-ext)
+        run: |
+          # Exits non-zero on any error; warnings are printed but allowed.
+          npx --yes "web-ext@${WEB_EXT_VERSION}" lint \
+            --source-dir dist/extension/firefox --no-config-discovery
+
       - name: Zip
         run: |
-          mkdir -p dist
-          cd extension
-          zip -r -X "../dist/pget-extension-${{ steps.v.outputs.version }}.zip" . \
-            -x 'scripts/*' '*.md' '.*' '*/.*'
-          cd ..
-          unzip -l "dist/pget-extension-${{ steps.v.outputs.version }}.zip"
+          v='${{ steps.v.outputs.version }}'
+          for target in chrome firefox; do
+            (cd "dist/extension/$target" && zip -r -X "../../pget-extension-$target-$v.zip" .)
+            unzip -l "dist/pget-extension-$target-$v.zip"
+          done
           sha256sum dist/*.zip
 
       - uses: actions/upload-artifact@v4

@@ -4,8 +4,14 @@
 連接埠預設 `17890`，被占用時依序試 `17891`～`17899`。擴充功能依序探測。
 
 所有回應都是 JSON，`Content-Type: application/json`。
-CORS：有帶 `Origin` 的請求只允許 `chrome-extension://*`（其他 Origin 一律 403），並回應 `Access-Control-Allow-Origin` 為該 Origin。
-沒有 `Origin` 的請求也放行：擴充功能對有主機權限的網址發 GET 時，瀏覽器不會帶 `Origin`。網頁的跨來源請求一定會帶 `Origin`，所以仍然會被擋；`Host` 必須是 `127.0.0.1` 或 `localhost` 加上本埠（防 DNS rebinding）。
+CORS：有帶 `Origin` 的請求只允許擴充功能來源（其他 Origin 一律 403），並回應 `Access-Control-Allow-Origin` 為該 Origin：
+
+- Chrome／Edge：`chrome-extension://<32 個 a–p 字元>`
+- Firefox：`moz-extension://<UUID>`，UUID 必須是小寫的 8-4-4-4-12 十六進位格式（Firefox 每個設定檔為擴充功能隨機產生一個，所以同一個擴充功能在不同電腦上的 Origin 不同；安全性靠 `/pair` 的使用者確認與 token，不靠固定 ID）
+
+完整比對（嚴格，整串比對，不接受結尾 `/`、子網域或大寫）：`^(chrome-extension://[a-p]{32}|moz-extension://[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$`。
+
+沒有 `Origin` 的請求也放行：擴充功能對有主機權限的網址發 GET 時，瀏覽器不會帶 `Origin`（POST 等請求則可能帶擴充功能自己的 Origin，上面已放行）。網頁的跨來源請求一定會帶 `Origin`，所以仍然會被擋；`Host` 必須是 `127.0.0.1` 或 `localhost` 加上本埠（防 DNS rebinding）。
 
 ## GET /ping
 
@@ -17,7 +23,7 @@ CORS：有帶 `Origin` 的請求只允許 `chrome-extension://*`（其他 Origin
 
 ## POST /pair
 
-不需要 token。請求：`{ "client": "Chrome 131 / PGet Extension 0.1.0" }`
+不需要 token。請求：`{ "client": "Chrome 131 / PGet Extension 0.2.0" }`（Firefox 為 `"Firefox 140 / PGet Extension 0.2.0"`）
 
 桌面程式跳出確認視窗（「有擴充功能要求連線，允許嗎？」）。
 - 使用者允許：`200 { "token": "<32 bytes hex>" }`，token 存在桌面程式設定裡（可以有多個，設定頁可撤銷）

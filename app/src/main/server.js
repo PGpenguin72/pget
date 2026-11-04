@@ -1,5 +1,5 @@
 // 給瀏覽器擴充功能用的本機 HTTP 端點（協定見 docs/protocol.md）
-// 只綁 127.0.0.1；只接受 chrome-extension:// 來源；/add 需要 token
+// 只綁 127.0.0.1；只接受 chrome-extension:// 與 moz-extension:// 來源；/add 需要 token
 'use strict';
 
 const crypto = require('node:crypto');
@@ -10,6 +10,10 @@ const PROTOCOL = 1;
 const MAX_BODY = 256 * 1024;
 const PAIR_TIMEOUT_MS = 60_000;
 const KINDS = new Set(['auto', 'http', 'video', 'torrent', 'magnet']);
+
+// 擴充功能的 Origin：Chrome／Edge 是 chrome-extension://<32 個 a–p>，
+// Firefox 是 moz-extension://<小寫 UUID>（每個 Firefox 設定檔隨機產生）
+const EXTENSION_ORIGIN = /^(?:chrome-extension:\/\/[a-p]{32}|moz-extension:\/\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/;
 
 const sha256 = (s) => crypto.createHash('sha256').update(String(s)).digest('hex');
 
@@ -84,10 +88,10 @@ class LocalServer {
     if (!new RegExp(`^(127\\.0\\.0\\.1|localhost):${this.port}$`).test(host)) {
       return this.send(res, 403, { error: 'forbidden' });
     }
-    // 有 Origin 就只允許擴充功能（Chrome／Edge 都是 chrome-extension://）。
+    // 有 Origin 就只允許擴充功能（Chrome／Edge 是 chrome-extension://，Firefox 是 moz-extension://）。
     // 擴充功能對有主機權限的網址發 GET 時，瀏覽器會當成特權請求、不帶 Origin，所以沒有 Origin 也放行；
     // 網頁的跨來源請求一定會帶 Origin，會在這裡被擋，/add 另外還要 token。
-    if (origin && !/^chrome-extension:\/\/[a-p]{32}$/.test(origin)) {
+    if (origin && !EXTENSION_ORIGIN.test(origin)) {
       return this.send(res, 403, { error: 'forbidden' });
     }
 
@@ -201,4 +205,4 @@ class LocalServer {
   }
 }
 
-module.exports = { LocalServer, PORTS };
+module.exports = { LocalServer, PORTS, EXTENSION_ORIGIN };

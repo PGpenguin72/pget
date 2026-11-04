@@ -1,4 +1,5 @@
-// PGet extension service worker.
+// PGet extension background script (Chrome / Edge: service worker; Firefox:
+// non-persistent background script, see scripts/build.mjs).
 //
 // Interception design (users must never lose a download):
 //   1. A browser download starts (downloads.onCreated).
@@ -10,14 +11,18 @@
 //      be resumed it is restarted with downloads.download().
 //   5. Downloads started by this extension (byExtensionId === our id) are never
 //      intercepted, so the fallback in step 4 cannot loop.
+//
+// Firefox has no downloads.onDeterminingFilename; this design never needed it,
+// so interception works the same in every browser.
 
+import { ext, IS_FIREFOX } from './lib/ext.js';
 import {
   getSettings, getToken, hostMatches, clearToken,
   cookiesEnabled, getSendCookies, setSendCookies, hasCookiePermission, COOKIE_ORIGINS,
 } from './lib/settings.js';
 import { addDownload, getStatus, pair, forgetPort, PGetError } from './lib/pget-client.js';
 
-const t = (key, subs) => chrome.i18n.getMessage(key, subs) || key;
+const t = (key, subs) => ext.i18n.getMessage(key, subs) || key;
 const inFlight = new Set();
 const HTTP_RE = /^https?:/i;
 
@@ -37,40 +42,60 @@ function nameFromUrl(url) {
   try { return decodeURIComponent(basename(new URL(url).pathname)); } catch { return ''; }
 }
 
-async function cookieHeaderFor(url) {
+/**
+ * Firefox only: the cookie store (container tab) a download belongs to.
+ * Chrome's DownloadItem has no cookieStoreId, so this is undefined there.
+ */
+function cookieStoreOf(item) {
+  const id = item && item.cookieStoreId;
+  return IS_FIREFOX && typeof id === 'string' && id ? id : undefined;
+}
+
+async function cookieHeaderFor(url, storeId) {
   if (!HTTP_RE.test(url)) return '';
   // Optional feature: only when the user turned it on AND granted the
   // optional host permission. Otherwise the download is sent without cookies.
   if (!(await cookiesEnabled())) return '';
+  // Only the cookies the browser would send to this exact URL
+  // (in Firefox: from the same container as the download).
+  const query = storeId ? { url, storeId } : { url };
+  let cookies;
   try {
-    // Only the cookies the browser would send to this exact URL.
-    const cookies = await chrome.cookies.getAll({ url });
-    return cookies.map((c) => `${c.name}=${c.value}`).join('; ');
+    cookies = await ext.cookies.getAll(query);
   } catch {
-    return '';
+    // Firefox with first-party isolation (privacy.firstparty.isolate) rejects
+    // queries without firstPartyDomain; null matches every first-party domain.
+    if (!IS_FIREFOX) return '';
+    try {
+      cookies = await ext.cookies.getAll({ ...query, firstPartyDomain: null });
+    } catch {
+      return '';
+    }
   }
+  return cookies.map((c) => `${c.name}=${c.value}`).join('; ');
 }
 
 async function notify(id, titleKey, messageKey, subs) {
+  const options = {
+    type: 'basic',
+    iconUrl: ext.runtime.getURL('icons/icon-128.png'),
+    title: t(titleKey),
+    message: t(messageKey, subs),
+  };
   try {
-    await chrome.notifications.create(id, {
-      type: 'basic',
-      iconUrl: chrome.runtime.getURL('icons/icon-128.png'),
-      title: t(titleKey),
-      message: t(messageKey, subs),
-      priority: 0,
-    });
+    // No id: let the browser generate one (Firefox and Chrome both do).
+    await (id ? ext.notifications.create(id, options) : ext.notifications.create(options));
   } catch { /* notifications are best effort */ }
 }
 
 let badgeTimer = null;
 async function flashBadge(text, color, sticky = false) {
   try {
-    await chrome.action.setBadgeBackgroundColor({ color });
-    await chrome.action.setBadgeText({ text });
+    await ext.action.setBadgeBackgroundColor({ color });
+    await ext.action.setBadgeText({ text });
     clearTimeout(badgeTimer);
     if (!sticky) {
-      badgeTimer = setTimeout(() => chrome.action.setBadgeText({ text: '' }).catch(() => {}), 4000);
+      badgeTimer = setTimeout(() => ext.action.setBadgeText({ text: '' }).catch(() => {}), 4000);
     }
   } catch { /* ignore */ }
 }
@@ -96,17 +121,19 @@ async function onFailure(err, userInitiated) {
 /** Give a paused download back to the browser. */
 async function giveBack(item) {
   try {
-    await chrome.downloads.resume(item.id);
+    await ext.downloads.resume(item.id);
     return;
   } catch { /* cannot resume: restart below */ }
   try {
-    const [current] = await chrome.downloads.search({ id: item.id });
+    const [current] = await ext.downloads.search({ id: item.id });
     if (current && current.state === 'complete') return;
     if (current && current.state === 'in_progress') {
-      await chrome.downloads.cancel(item.id).catch(() => {});
+      await ext.downloads.cancel(item.id).catch(() => {});
     }
     // byExtensionId on the new item will be ours, so onCreated skips it.
-    await chrome.downloads.download({ url: item.url });
+    // Firefox: restart in the same container so the site sees the same cookies.
+    const storeId = cookieStoreOf(item);
+    await ext.downloads.download(storeId ? { url: item.url, cookieStoreId: storeId } : { url: item.url });
   } catch (e) {
     console.warn('PGet: could not hand the download back to the browser', e);
   }
@@ -115,7 +142,7 @@ async function giveBack(item) {
 // ---------------------------------------------------------------- interception
 
 async function isCandidate(item, settings) {
-  if (item.byExtensionId && item.byExtensionId === chrome.runtime.id) return false;
+  if (item.byExtensionId && item.byExtensionId === ext.runtime.id) return false;
   if (item.incognito) return false;              // never touch private-window downloads
   if (item.state !== 'in_progress') return false;
   const url = item.finalUrl || item.url;
@@ -138,14 +165,14 @@ async function intercept(item) {
   inFlight.add(item.id);
   try {
     try {
-      await chrome.downloads.pause(item.id);
+      await ext.downloads.pause(item.id);
     } catch {
       return; // already finished or failed: nothing to take over
     }
 
     let current = item;
     try {
-      const [fresh] = await chrome.downloads.search({ id: item.id });
+      const [fresh] = await ext.downloads.search({ id: item.id });
       if (fresh) current = fresh;
     } catch { /* keep original */ }
 
@@ -155,7 +182,7 @@ async function intercept(item) {
       url,
       filename: name || undefined,
       referrer: current.referrer || undefined,
-      cookies: (await cookieHeaderFor(url)) || undefined,
+      cookies: (await cookieHeaderFor(url, cookieStoreOf(current))) || undefined,
       userAgent: navigator.userAgent,
       size: current.totalBytes > 0 ? current.totalBytes : 0,
       mime: current.mime || undefined,
@@ -171,15 +198,15 @@ async function intercept(item) {
     }
 
     // PGet confirmed: remove the browser copy.
-    try { await chrome.downloads.cancel(item.id); } catch { /* ignore */ }
-    try { await chrome.downloads.erase({ id: item.id }); } catch { /* ignore */ }
+    try { await ext.downloads.cancel(item.id); } catch { /* ignore */ }
+    try { await ext.downloads.erase({ id: item.id }); } catch { /* ignore */ }
     await onSent(name || nameFromUrl(url));
   } finally {
     inFlight.delete(item.id);
   }
 }
 
-chrome.downloads.onCreated.addListener((item) => {
+ext.downloads.onCreated.addListener((item) => {
   intercept(item).catch((e) => console.warn('PGet: intercept error', e));
 });
 
@@ -189,21 +216,22 @@ const MENU_LINK = 'pget-link';
 const MENU_MEDIA = 'pget-media';
 const MENU_PAGE_VIDEO = 'pget-page-video';
 
-function createMenus() {
-  chrome.contextMenus.removeAll(() => {
-    chrome.contextMenus.create({ id: MENU_LINK, title: t('menuDownloadLink'), contexts: ['link'] });
-    chrome.contextMenus.create({ id: MENU_MEDIA, title: t('menuDownloadMedia'), contexts: ['video', 'audio'] });
-    chrome.contextMenus.create({
-      id: MENU_PAGE_VIDEO,
-      title: t('menuDownloadPageVideo'),
-      contexts: ['page', 'frame'],
-      documentUrlPatterns: ['http://*/*', 'https://*/*'],
-    });
+async function createMenus() {
+  // Promise style only: Firefox's browser.* rejects callback arguments.
+  await ext.contextMenus.removeAll();
+  ext.contextMenus.create({ id: MENU_LINK, title: t('menuDownloadLink'), contexts: ['link'] });
+  ext.contextMenus.create({ id: MENU_MEDIA, title: t('menuDownloadMedia'), contexts: ['video', 'audio'] });
+  ext.contextMenus.create({
+    id: MENU_PAGE_VIDEO,
+    title: t('menuDownloadPageVideo'),
+    contexts: ['page', 'frame'],
+    documentUrlPatterns: ['http://*/*', 'https://*/*'],
   });
 }
 
-chrome.runtime.onInstalled.addListener(createMenus);
-chrome.runtime.onStartup.addListener(createMenus);
+const createMenusSafe = () => { createMenus().catch((e) => console.warn('PGet: menu setup error', e)); };
+ext.runtime.onInstalled.addListener(createMenusSafe);
+ext.runtime.onStartup.addListener(createMenusSafe);
 
 // ---------------------------------------------------------------- optional cookie permission
 
@@ -212,9 +240,9 @@ async function syncCookiePermission() {
   if ((await getSendCookies()) && !(await hasCookiePermission())) await setSendCookies(false);
 }
 
-chrome.runtime.onInstalled.addListener(() => { syncCookiePermission().catch(() => {}); });
-chrome.runtime.onStartup.addListener(() => { syncCookiePermission().catch(() => {}); });
-chrome.permissions.onRemoved.addListener((removed) => {
+ext.runtime.onInstalled.addListener(() => { syncCookiePermission().catch(() => {}); });
+ext.runtime.onStartup.addListener(() => { syncCookiePermission().catch(() => {}); });
+ext.permissions.onRemoved.addListener((removed) => {
   if ((removed.origins || []).some((o) => COOKIE_ORIGINS.includes(o))) {
     setSendCookies(false).catch(() => {});
   } else {
@@ -222,12 +250,12 @@ chrome.permissions.onRemoved.addListener((removed) => {
   }
 });
 
-async function sendFromMenu({ url, referrer, kind, fallbackToBrowser }) {
+async function sendFromMenu({ url, referrer, kind, fallbackToBrowser, storeId }) {
   try {
     await addDownload({
       url,
       referrer: referrer || undefined,
-      cookies: (await cookieHeaderFor(url)) || undefined,
+      cookies: (await cookieHeaderFor(url, storeId)) || undefined,
       userAgent: navigator.userAgent,
       size: 0,
       kind,
@@ -236,13 +264,15 @@ async function sendFromMenu({ url, referrer, kind, fallbackToBrowser }) {
   } catch (err) {
     // An explicit "download this link" should still work when PGet is unavailable.
     if (fallbackToBrowser && HTTP_RE.test(url)) {
-      try { await chrome.downloads.download({ url }); } catch { /* ignore */ }
+      try {
+        await ext.downloads.download(storeId ? { url, cookieStoreId: storeId } : { url });
+      } catch { /* ignore */ }
     }
     await onFailure(err, true);
   }
 }
 
-chrome.contextMenus.onClicked.addListener((info) => {
+ext.contextMenus.onClicked.addListener((info, tab) => {
   // info.pageUrl / frameUrl are provided by contextMenus without any host permission.
   const pageUrl = info.frameUrl || info.pageUrl || '';
   let job = null;
@@ -264,32 +294,34 @@ chrome.contextMenus.onClicked.addListener((info) => {
     notify('', 'notifyErrorTitle', 'notifyUnsupportedBody');
     return;
   }
+  // Firefox: use the container (cookie store) of the tab the menu was opened in.
+  job.storeId = cookieStoreOf(tab);
   sendFromMenu(job).catch((e) => console.warn('PGet: menu error', e));
 });
 
-chrome.notifications.onClicked.addListener((id) => {
-  if (id === 'pget-pair') chrome.runtime.openOptionsPage();
-  chrome.notifications.clear(id);
+ext.notifications.onClicked.addListener((id) => {
+  if (id === 'pget-pair') ext.runtime.openOptionsPage();
+  ext.notifications.clear(id);
 });
 
 // ---------------------------------------------------------------- popup / options API
 
 let pairing = null;
 // A service-worker restart abandons any pending pair request.
-chrome.storage.session.set({ pairing: false }).catch(() => {});
+ext.storage.session.set({ pairing: false }).catch(() => {});
 
 async function doPair() {
   if (!pairing) {
     pairing = (async () => {
-      await chrome.storage.session.set({ pairing: true });
+      await ext.storage.session.set({ pairing: true });
       try {
         await pair();
-        chrome.action.setBadgeText({ text: '' }).catch(() => {});
+        ext.action.setBadgeText({ text: '' }).catch(() => {});
         return { ok: true };
       } catch (err) {
         return { ok: false, error: err instanceof PGetError ? err.code : 'network' };
       } finally {
-        await chrome.storage.session.set({ pairing: false });
+        await ext.storage.session.set({ pairing: false });
         pairing = null;
       }
     })();
@@ -297,8 +329,8 @@ async function doPair() {
   return pairing;
 }
 
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  if (sender.id !== chrome.runtime.id || !msg || typeof msg.type !== 'string') return false;
+ext.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (sender.id !== ext.runtime.id || !msg || typeof msg.type !== 'string') return false;
   const handlers = {
     status: () => getStatus({ force: !!msg.force }),
     pair: () => doPair(),

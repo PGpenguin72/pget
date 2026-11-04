@@ -18,7 +18,7 @@ export default {
     features: [
       ['⚡', 'Multi-connection', 'Splits each file into many parts and downloads them at once. 32 connections by default, up to 128.'],
       ['⏯️', 'Resume anytime', 'Lost your connection or shut down? Pick up right where you left off.'],
-      ['🧩', 'Browser integration', 'Extensions for Chrome and Edge. Click a download and PGet takes over — even on sites that require you to sign in.'],
+      ['🧩', 'Browser integration', 'Extensions for Chrome, Edge and Firefox (the Firefox add-on is under review). Click a download and PGet takes over — even on sites that require you to sign in.'],
       ['🎬', 'Video sites', 'Paste a YouTube, Bilibili or similar link, pick a quality, and download.'],
       ['🧲', 'BitTorrent / magnet', 'Drop in torrent files and magnet links directly.'],
       ['🚦', 'Queue & speed limits', 'Control how many downloads run at once and how fast, so your connection stays usable.'],

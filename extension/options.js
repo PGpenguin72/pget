@@ -1,3 +1,4 @@
+import { ext } from './lib/ext.js';
 import { localizePage, t } from './lib/i18n.js';
 import { initTheme, applyTheme } from './lib/theme.js';
 import {
@@ -38,7 +39,7 @@ const STATE_TEXT = {
 
 async function refreshStatus(force = true) {
   let st;
-  try { st = await chrome.runtime.sendMessage({ type: 'status', force }); } catch { st = null; }
+  try { st = await ext.runtime.sendMessage({ type: 'status', force }); } catch { st = null; }
   const state = st?.state || 'not_running';
   statusEl.className = `status ${state}`;
   statusEl.textContent = t(STATE_TEXT[state]);
@@ -47,7 +48,7 @@ async function refreshStatus(force = true) {
   pairBtn.textContent = t(state === 'connected' ? 'optRepair' : 'popupPair');
   pairBtn.disabled = state === 'not_running';
   forgetBtn.disabled = state === 'not_paired';
-  const { pairing } = await chrome.storage.session.get('pairing');
+  const { pairing } = await ext.storage.session.get('pairing');
   if (pairing) {
     pairBtn.disabled = true;
     pairBtn.textContent = t('pairWaiting');
@@ -59,7 +60,7 @@ pairBtn.addEventListener('click', async () => {
   pairBtn.disabled = true;
   pairBtn.textContent = t('pairWaiting');
   hintEl.textContent = t('pairWaitingHint');
-  const res = await chrome.runtime.sendMessage({ type: 'pair' }).catch(() => null);
+  const res = await ext.runtime.sendMessage({ type: 'pair' }).catch(() => null);
   await refreshStatus();
   if (res?.ok) toast('pairSuccess');
   else hintEl.textContent = t(res?.error === 'denied' ? 'pairDenied' : 'pairFailed');
@@ -67,7 +68,7 @@ pairBtn.addEventListener('click', async () => {
 
 forgetBtn.addEventListener('click', async () => {
   if (!confirm(t('optForgetConfirm'))) return;
-  await chrome.runtime.sendMessage({ type: 'forget' }).catch(() => null);
+  await ext.runtime.sendMessage({ type: 'forget' }).catch(() => null);
   await refreshStatus();
   toast('optForgotten');
 });
@@ -123,7 +124,7 @@ const cookiesEl = $('sendCookies');
 cookiesEl.addEventListener('change', () => {
   if (cookiesEl.checked) {
     // permissions.request must run directly inside the user gesture: no await before it.
-    chrome.permissions.request({ origins: [...COOKIE_ORIGINS] }).then(async (granted) => {
+    ext.permissions.request({ origins: [...COOKIE_ORIGINS] }).then(async (granted) => {
       if (!granted) {
         cookiesEl.checked = false;
         await setSendCookies(false);
@@ -138,7 +139,7 @@ cookiesEl.addEventListener('change', () => {
     });
   } else {
     setSendCookies(false)
-      .then(() => chrome.permissions.remove({ origins: [...COOKIE_ORIGINS] }).catch(() => false))
+      .then(() => ext.permissions.remove({ origins: [...COOKIE_ORIGINS] }).catch(() => false))
       .then(() => toast('optSaved'));
   }
 });
@@ -171,19 +172,19 @@ async function init() {
   const radio = document.querySelector(`input[name="theme"][value="${settings.theme}"]`)
     || document.querySelector('input[name="theme"][value="system"]');
   radio.checked = true;
-  $('extVersion').textContent = t('optVersion', [chrome.runtime.getManifest().version]);
+  $('extVersion').textContent = t('optVersion', [ext.runtime.getManifest().version]);
   renderSites();
   await syncCookieSwitch();
   refreshStatus(false);
 
-  chrome.storage.onChanged.addListener((changes, area) => {
+  ext.storage.onChanged.addListener((changes, area) => {
     if (area === 'local' && changes.token) refreshStatus();
     if (area === 'session' && changes.pairing) refreshStatus(false);
     if (area === 'sync' && changes.paused) $('paused').checked = !!changes.paused.newValue;
     if (area === 'local' && changes.sendCookies) syncCookieSwitch();
   });
-  chrome.permissions.onRemoved.addListener(syncCookieSwitch);
-  chrome.permissions.onAdded.addListener(syncCookieSwitch);
+  ext.permissions.onRemoved.addListener(syncCookieSwitch);
+  ext.permissions.onAdded.addListener(syncCookieSwitch);
 }
 
 init();

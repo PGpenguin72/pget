@@ -1,3 +1,4 @@
+import { ext } from './lib/ext.js';
 import { localizePage, t } from './lib/i18n.js';
 import { initTheme } from './lib/theme.js';
 import { getSettings, setSettings, cookiesEnabled } from './lib/settings.js';
@@ -34,7 +35,7 @@ function setState(state, version) {
 async function refresh(force = false) {
   refreshBtn.classList.add('spin');
   try {
-    const st = await chrome.runtime.sendMessage({ type: 'status', force });
+    const st = await ext.runtime.sendMessage({ type: 'status', force });
     setState(st?.state || 'not_running', st?.version);
   } catch {
     setState('not_running');
@@ -45,7 +46,7 @@ async function refresh(force = false) {
 }
 
 async function showPairing() {
-  const { pairing } = await chrome.storage.session.get('pairing');
+  const { pairing } = await ext.storage.session.get('pairing');
   if (pairing) {
     pairBtn.hidden = false;
     pairBtn.disabled = true;
@@ -61,7 +62,7 @@ pairBtn.addEventListener('click', async () => {
   pairBtn.disabled = true;
   pairBtn.textContent = t('pairWaiting');
   hintEl.textContent = t('pairWaitingHint');
-  const res = await chrome.runtime.sendMessage({ type: 'pair' }).catch(() => null);
+  const res = await ext.runtime.sendMessage({ type: 'pair' }).catch(() => null);
   await refresh(true);
   if (res && !res.ok) hintEl.textContent = t(PAIR_ERRORS[res.error] || 'pairFailed');
 });
@@ -78,17 +79,17 @@ async function showCookieHint() {
 
 $('cookieEnable').addEventListener('click', (e) => {
   e.preventDefault();
-  chrome.runtime.openOptionsPage();
+  ext.runtime.openOptionsPage();
   window.close();
 });
 
 $('openOptions').addEventListener('click', (e) => {
   e.preventDefault();
-  chrome.runtime.openOptionsPage();
+  ext.runtime.openOptionsPage();
   window.close();
 });
 
-chrome.storage.onChanged.addListener((changes, area) => {
+ext.storage.onChanged.addListener((changes, area) => {
   if (area === 'local' && changes.token) refresh(true);
   if (area === 'session' && changes.pairing) showPairing();
   if (area === 'sync' && changes.paused) pausedEl.checked = !!changes.paused.newValue;

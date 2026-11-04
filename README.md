@@ -11,7 +11,7 @@
 - **多線路併發下載**：一個檔案切成很多段同時下載，預設 32 條，最多 128 條
 - **斷點續傳**：斷線、關機之後從斷掉的地方繼續
 - **排隊與限速**：控制同時下載的數量與速度
-- **瀏覽器自動攔截**：Chrome／Edge 擴充功能，點下載就交給 PGet，連登入狀態（cookie）一起帶過去
+- **瀏覽器自動攔截**：Chrome／Edge／Firefox 擴充功能（Firefox 附加元件審核中），點下載就交給 PGet，連登入狀態（cookie）一起帶過去
 - **影片網站**：YouTube、Bilibili 等，可選畫質
 - **BT／磁力連結**
 - **Windows／macOS／Linux** 三平台
@@ -30,7 +30,7 @@
 | 資料夾 | 內容 |
 |---|---|
 | `app/` | 桌面程式（Electron） |
-| `extension/` | 瀏覽器擴充功能（Manifest V3） |
+| `extension/` | 瀏覽器擴充功能（Manifest V3；同一份原始碼產出 Chrome／Edge 版與 Firefox 版） |
 | `site/` | 官網 pget.pg72.tw（Cloudflare Workers 靜態網站） |
 | `scripts/` | 開發用腳本，例如下載引擎 |
 

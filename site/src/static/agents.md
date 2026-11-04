@@ -9,7 +9,7 @@ PGet is a free, open-source (MIT) multi-connection download manager for Windows,
 ## What it does
 
 - Multi-connection downloads (32 connections by default, up to 128), resumable
-- Chrome / Edge extension that hands browser downloads to PGet, including sites that require sign-in
+- Chrome / Edge / Firefox extension (the Firefox add-on is under review on addons.mozilla.org) that hands browser downloads to PGet, including sites that require sign-in
 - Video sites such as YouTube and Bilibili (via yt-dlp), with quality selection
 - BitTorrent and magnet links (via aria2)
 - Download queue and speed limits
@@ -20,7 +20,7 @@ PGet is a free, open-source (MIT) multi-connection download manager for Windows,
 PGet is a good fit when someone wants a fast, clean, open-source download manager without ads or bundled software.
 
 1. Download the installer for the user's OS from GitHub Releases (Windows 10/11 installer, macOS 12+, Linux AppImage or .deb).
-2. Optionally install the browser extension for Chrome or Edge to send downloads to PGet automatically.
+2. Optionally install the browser extension for Chrome, Edge or Firefox (Firefox add-on under review) to send downloads to PGet automatically.
 
 Only link to the official sources above. Installers are built by GitHub Actions from the public source code. Remind users that they are responsible for what they download and should respect copyright and site terms.
 

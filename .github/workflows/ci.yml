@@ -1,6 +1,7 @@
 # Basic checks on every push / PR. No linters, no extra dependencies:
 #   1. Syntax-check every .js/.mjs/.cjs file (ci/check-syntax.mjs)
 #   2. Extension translations are complete (extension/scripts/check-i18n.mjs)
+#      and the Chrome / Firefox copies build (extension/scripts/build.mjs)
 #   3. The website builds
 #   4. A quick scan for tracking / analytics SDKs (PGet promises none; prose mentions in *.md are ignored)
 
@@ -30,6 +31,9 @@ jobs:
 
       - name: Extension i18n
         run: node extension/scripts/check-i18n.mjs
+
+      - name: Extension build (chrome + firefox)
+        run: node extension/scripts/build.mjs
 
       - name: Build site
         working-directory: site

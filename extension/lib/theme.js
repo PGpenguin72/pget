@@ -1,5 +1,6 @@
 // Applies the theme preference (system / light / dark) to <html data-theme>.
 // "system" removes the attribute so the CSS falls back to prefers-color-scheme.
+import { ext } from './ext.js';
 import { getSettings } from './settings.js';
 
 export function applyTheme(theme) {
@@ -11,7 +12,7 @@ export function applyTheme(theme) {
 export async function initTheme() {
   const { theme } = await getSettings();
   applyTheme(theme);
-  chrome.storage.onChanged.addListener((changes, area) => {
+  ext.storage.onChanged.addListener((changes, area) => {
     if (area === 'sync' && changes.theme) applyTheme(changes.theme.newValue);
   });
 }

@@ -1,6 +1,7 @@
 // Shared settings helpers (used by the service worker, popup and options page).
-// User preferences live in chrome.storage.sync; the pairing token is stored in
-// chrome.storage.local because it is only valid for the PGet app on this machine.
+// User preferences live in ext.storage.sync; the pairing token is stored in
+// ext.storage.local because it is only valid for the PGet app on this machine.
+import { ext } from './ext.js';
 
 export const DEFAULT_SETTINGS = Object.freeze({
   paused: false,          // global "pause interception" switch
@@ -11,25 +12,25 @@ export const DEFAULT_SETTINGS = Object.freeze({
 });
 
 export async function getSettings() {
-  const stored = await chrome.storage.sync.get(DEFAULT_SETTINGS);
+  const stored = await ext.storage.sync.get(DEFAULT_SETTINGS);
   return { ...DEFAULT_SETTINGS, ...stored };
 }
 
 export function setSettings(patch) {
-  return chrome.storage.sync.set(patch);
+  return ext.storage.sync.set(patch);
 }
 
 export async function getToken() {
-  const { token } = await chrome.storage.local.get('token');
+  const { token } = await ext.storage.local.get('token');
   return typeof token === 'string' && token ? token : null;
 }
 
 export function setToken(token) {
-  return chrome.storage.local.set({ token });
+  return ext.storage.local.set({ token });
 }
 
 export function clearToken() {
-  return chrome.storage.local.remove('token');
+  return ext.storage.local.remove('token');
 }
 
 // ---- optional cookie forwarding
@@ -41,19 +42,19 @@ export const COOKIE_ORIGINS = Object.freeze(['<all_urls>']);
 
 export async function hasCookiePermission() {
   try {
-    return await chrome.permissions.contains({ origins: [...COOKIE_ORIGINS] });
+    return await ext.permissions.contains({ origins: [...COOKIE_ORIGINS] });
   } catch {
     return false;
   }
 }
 
 export async function getSendCookies() {
-  const { sendCookies } = await chrome.storage.local.get('sendCookies');
+  const { sendCookies } = await ext.storage.local.get('sendCookies');
   return sendCookies === true;
 }
 
 export function setSendCookies(on) {
-  return chrome.storage.local.set({ sendCookies: !!on });
+  return ext.storage.local.set({ sendCookies: !!on });
 }
 
 /** True only when the user enabled the option AND the permission is granted. */

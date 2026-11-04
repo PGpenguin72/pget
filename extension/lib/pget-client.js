@@ -1,5 +1,6 @@
 // Client side of the PGet extension <-> desktop protocol v1 (docs/protocol.md).
 // The ONLY network destination of this extension is http://127.0.0.1:17890-17899.
+import { ext, IS_FIREFOX } from './ext.js';
 import { getToken, setToken, clearToken } from './settings.js';
 
 export const PORT_FIRST = 17890;
@@ -91,8 +92,12 @@ export async function getStatus({ force = false } = {}) {
 }
 
 export function clientName() {
-  const version = chrome.runtime.getManifest().version;
+  const version = ext.runtime.getManifest().version;
   const ua = navigator.userAgent;
+  if (IS_FIREFOX) {
+    const m = ua.match(/Firefox\/(\d+)/);
+    return `Firefox${m ? ' ' + m[1] : ''} / PGet Extension ${version}`;
+  }
   let browser = 'Chromium';
   const brands = navigator.userAgentData?.brands || [];
   const named = brands.find((b) => /Edge|Chrome|Opera|Brave|Vivaldi/i.test(b.brand) && !/Not/i.test(b.brand));

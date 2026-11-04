@@ -29,7 +29,7 @@ node scripts/fetch-engines.mjs     # 下載 aria2c 與 yt-dlp 到 app/bin/
 cd app && npm install && npm start # 桌面程式
 ```
 
-- **擴充功能**：Chrome／Edge 打開 `chrome://extensions`，開啟「開發人員模式」，「載入未封裝項目」選 `extension/` 資料夾
+- **擴充功能**：Chrome／Edge 打開 `chrome://extensions`，開啟「開發人員模式」，「載入未封裝項目」選 `extension/` 資料夾；Firefox 先跑 `node extension/scripts/build.mjs firefox`，再到 `about:debugging#/runtime/this-firefox`「載入臨時附加元件」選 `dist/extension/firefox/manifest.json`
 - **官網**：`cd site && npm install && npx wrangler dev`
 
 ## 送出 PR 之前
@@ -89,7 +89,7 @@ node scripts/fetch-engines.mjs
 cd app && npm install && npm start
 ```
 
-Load `extension/` as an unpacked extension in `chrome://extensions` (Developer mode). Preview the site with `cd site && npm install && npx wrangler dev`.
+Load `extension/` as an unpacked extension in `chrome://extensions` (Developer mode). For Firefox, run `node extension/scripts/build.mjs firefox` and load `dist/extension/firefox/manifest.json` from `about:debugging#/runtime/this-firefox`. Preview the site with `cd site && npm install && npx wrangler dev`.
 
 ## Before opening a PR
 

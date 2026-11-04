@@ -1,9 +1,10 @@
 // Fills elements marked with data-i18n (text), data-i18n-title,
 // data-i18n-placeholder and data-i18n-aria-label from _locales/*/messages.json.
 // Always sets text / attributes, never HTML.
+import { ext } from './ext.js';
 
 export function t(key, subs) {
-  return chrome.i18n.getMessage(key, subs) || key;
+  return ext.i18n.getMessage(key, subs) || key;
 }
 
 const ATTRS = [
@@ -13,7 +14,7 @@ const ATTRS = [
 ];
 
 export function localizePage(root = document) {
-  document.documentElement.lang = chrome.i18n.getUILanguage();
+  document.documentElement.lang = ext.i18n.getUILanguage();
   for (const el of root.querySelectorAll('[data-i18n]')) {
     el.textContent = t(el.getAttribute('data-i18n'));
   }
