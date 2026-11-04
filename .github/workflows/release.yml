@@ -123,7 +123,8 @@ jobs:
           for app in mac*/PGet.app; do
             echo "== $app"
             codesign --verify --deep --strict --verbose=2 "$app"
-            xcrun stapler validate "$app"
+            # stapler 會連 Apple 的 CloudKit，偶爾網路斷線（Error 68），重試幾次
+            for i in 1 2 3 4 5; do xcrun stapler validate "$app" && break; [ $i = 5 ] && exit 1; sleep 15; done
             spctl --assess --type execute --verbose=4 "$app"
           done
 
