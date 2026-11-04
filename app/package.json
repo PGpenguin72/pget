@@ -84,7 +84,8 @@
             "arm64"
           ]
         }
-      ]
+      ],
+      "notarize": false
     },
     "linux": {
       "category": "Network",
@@ -94,6 +95,7 @@
         "AppImage",
         "deb"
       ]
-    }
+    },
+    "afterSign": "build/notarize.js"
   }
 }

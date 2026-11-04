@@ -21,7 +21,7 @@
 #     APPLE_TEAM_ID                10-character Team ID
 #   Windows (optional, independent of macOS): WIN_CSC_LINK (base64 .pfx), WIN_CSC_KEY_PASSWORD
 # electron-builder signs PGet.app (incl. aria2c / yt-dlp in Resources/bin) with Hardened
-# Runtime + app/build/entitlements.mac.plist, notarizes it and staples the ticket.
+# Runtime + app/build/entitlements.mac.plist; app/build/notarize.js (afterSign) notarizes + staples with retries.
 # Without secrets the builds are unsigned and trigger SmartScreen / Gatekeeper warnings.
 
 name: Release app
