@@ -51,6 +51,17 @@ cd app && npm install && npm start
 - 問題回報、功能建議：請開 [GitHub Issues](https://github.com/PGpenguin72/pget/issues)
 - 其他事情：<developer@pg72.tw>
 
+## 程式碼簽章政策（Code signing policy）
+
+Free code signing provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org).
+
+- Windows 的安裝版與免安裝版 exe 由 SignPath Foundation 免費簽章（申請中；開始簽章前的版本仍未簽章）
+- 只簽本專案原始碼由 GitHub Actions 自動建置的檔案；隨附的 aria2、yt-dlp、Electron 程式庫不簽
+- Committers and reviewers：[PGpenguin72](https://github.com/PGpenguin72)；Approvers：[PGpenguin72](https://github.com/PGpenguin72)
+- 隱私：見[隱私權政策](https://pget.pg72.tw/privacy/)
+
+完整說明：<https://pget.pg72.tw/code-signing/>（維護者設定步驟見 [docs/CODE_SIGNING.md](docs/CODE_SIGNING.md)）
+
 ## 授權
 
 [MIT](LICENSE) © 2026 PGpenguin72

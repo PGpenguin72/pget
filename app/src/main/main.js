@@ -345,7 +345,8 @@ app.on('second-instance', (_e, argv) => {
 });
 
 app.whenReady().then(async () => {
-  if (process.platform === 'win32') app.setAppUserModelId('tw.pg72.pget');
+  // 開發版用不同的 App ID，免得 Windows 把正式版的工作列／通知圖示對應到 electron.exe
+  if (process.platform === 'win32') app.setAppUserModelId(app.isPackaged ? 'tw.pg72.pget' : 'tw.pg72.pget.dev');
 
   settings = new Settings();
   i18n = new I18n(settings.get('language'));

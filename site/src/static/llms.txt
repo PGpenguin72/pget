@@ -24,6 +24,7 @@ The canonical language of the site is Traditional Chinese (zh-TW); other languag
 - [Terms of Service (简体中文)](https://pget.pg72.tw/zh-cn/terms/)
 - [Terms of Service (日本語)](https://pget.pg72.tw/ja/terms/)
 - [Terms of Service (한국어)](https://pget.pg72.tw/ko/terms/)
+- [Code signing policy (English)](https://pget.pg72.tw/en/code-signing/): How Windows builds are signed (SignPath Foundation), team roles
 
 ## Source and downloads
 

@@ -1,6 +1,6 @@
 export default {
   langName: '繁體中文',
-  nav: { features: '功能', download: '下載', privacy: '隱私權政策', terms: '服務條款', source: '原始碼' },
+  nav: { features: '功能', download: '下載', privacy: '隱私權政策', terms: '服務條款', source: '原始碼', signing: "程式碼簽章政策（Code signing policy）" },
   theme: { label: '主題', light: '淺色', dark: '深色', system: '跟隨系統' },
   footer: 'PGet 以 MIT 授權開源 · © 2026 PGpenguin72',
   notFound: '找不到這個頁面。',
@@ -53,6 +53,17 @@ export default {
     ],
   },
 
+  signing: {
+    title: "程式碼簽章政策",
+    desc: "PGet Windows 版的程式碼簽章方式、負責的人與隱私說明。",
+    sections: [
+      ["Code signing policy", "<p>Free code signing provided by <a href=\"https://about.signpath.io\">SignPath.io</a>, certificate by <a href=\"https://signpath.org\">SignPath Foundation</a>.</p><p>PGet 的 Windows 安裝檔（安裝版與免安裝版）由 SignPath Foundation 提供免費的程式碼簽章，簽章後 Windows 會顯示發行者為「SignPath Foundation」。目前正在申請中，簽章開始之前發布的版本仍然沒有簽章。</p>"],
+      ["簽什麼、怎麼簽", "<ul><li>只簽本專案原始碼建置出來的檔案：Windows 的安裝版與免安裝版 exe。</li><li>所有檔案都由 GitHub Actions 在 GitHub 提供的主機上，從<a href=\"{repo}\">公開的原始碼</a>自動建置；建置腳本也一起公開在 repo 裡。</li><li>隨附的第三方開源元件（aria2、yt-dlp、Electron 的程式庫）不會用本專案的憑證簽章，維持原作者發布的樣子。</li><li>每一次發版的簽章請求，都要由核准者手動核准。</li></ul>"],
+      ["團隊與角色", "<ul><li>Committers and reviewers（提交與審查）：<a href=\"https://github.com/PGpenguin72\">PGpenguin72</a></li><li>Approvers（核准簽章）：<a href=\"https://github.com/PGpenguin72\">PGpenguin72</a></li></ul><p>外部貢獻者的變更（pull request）都要經過審查才會合併。所有成員的 GitHub 與 SignPath 帳號都開啟兩步驟驗證。</p>"],
+      ["隱私權", "<p>PGet 會傳送哪些資料、傳到哪裡，請看<a href=\"../privacy/\">隱私權政策</a>。簡單說：PGet 只會連線到你要求下載的網址；BT／磁力下載會連到 BT 網路；「自動檢查更新」會連到 GitHub，可以在設定裡關掉。</p>"],
+      ["自己驗證", "<p>在 Windows 對安裝檔按右鍵 →「內容」→「數位簽章」，可以看到簽章者與簽章時間。也可以用 GitHub Release 裡的 <code>SHA256SUMS</code> 核對檔案。</p>"],
+    ],
+  },
   terms: {
     title: '服務條款',
     desc: '使用 PGet 桌面程式、瀏覽器擴充功能與本網站的條款。',

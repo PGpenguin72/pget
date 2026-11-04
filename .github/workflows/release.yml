@@ -23,6 +23,9 @@
 # electron-builder signs PGet.app (incl. aria2c / yt-dlp in Resources/bin) with Hardened
 # Runtime + app/build/entitlements.mac.plist; app/build/notarize.js (afterSign) notarizes + staples with retries.
 # Without secrets the builds are unsigned and trigger SmartScreen / Gatekeeper warnings.
+#
+# Windows signing via SignPath Foundation (free for OSS): set the repo variable
+# SIGNPATH_ORGANIZATION_ID and the secret SIGNPATH_API_TOKEN, see docs/CODE_SIGNING.md.
 
 name: Release app
 
@@ -54,7 +57,7 @@ jobs:
             runner: ubuntu-24.04
             native: linux-x64
     runs-on: ${{ matrix.runner }}
-    timeout-minutes: 60
+    timeout-minutes: 150   # Windows 簽章要等人工核准
     steps:
       - uses: actions/checkout@v5
 
@@ -128,6 +131,46 @@ jobs:
             spctl --assess --type execute --verbose=4 "$app"
           done
 
+      # --- Windows 程式碼簽章（SignPath Foundation，見 docs/CODE_SIGNING.md）---
+      # 只在推 tag 且設定了 repo 變數 SIGNPATH_ORGANIZATION_ID 時執行；沒設定就照舊產出未簽章的檔案。
+      # 簽的是安裝版與免安裝版 exe；送出後要由 Approver 在 SignPath 網站手動核准，這一步會等核准完成。
+      - name: Upload unsigned installers (for SignPath)
+        id: unsigned
+        if: matrix.name == 'windows' && github.ref_type == 'tag' && vars.SIGNPATH_ORGANIZATION_ID != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: unsigned-windows
+          if-no-files-found: error
+          path: |
+            app/dist/PGet-Setup-*.exe
+            app/dist/PGet-Portable-*.exe
+
+      - name: Sign installers (SignPath)
+        if: steps.unsigned.outcome == 'success'
+        uses: signpath/github-action-submit-signing-request@v3
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG || 'pget' }}
+          signing-policy-slug: ${{ vars.SIGNPATH_SIGNING_POLICY_SLUG || 'release-signing' }}
+          artifact-configuration-slug: ${{ vars.SIGNPATH_ARTIFACT_CONFIGURATION_SLUG || 'installers' }}
+          github-artifact-id: ${{ steps.unsigned.outputs.artifact-id }}
+          wait-for-completion: true
+          wait-for-completion-timeout-in-seconds: 5400   # 等人工核准，最多 90 分鐘
+          output-artifact-directory: app/dist/signed
+          parameters: |
+            version: ${{ toJSON(github.ref_name) }}
+
+      - name: Use signed installers
+        if: steps.unsigned.outcome == 'success'
+        shell: bash
+        working-directory: app/dist
+        # 簽章後檔案內容變了，electron-builder 產的 blockmap／latest.yml 雜湊就不對了；PGet 沒用 electron-updater，直接拿掉
+        run: |
+          ls -la signed
+          cp -f signed/*.exe .
+          rm -rf signed ./*.blockmap latest*.yml
+
       - uses: actions/upload-artifact@v4
         with:
           name: installers-${{ matrix.name }}
@@ -168,4 +211,4 @@ jobs:
         run: |
           gh release create "$TAG" assets/* \
             --repo "$GITHUB_REPOSITORY" --draft --title "PGet $TAG" --generate-notes \
-            --notes "Checksums: see SHA256SUMS."
+            --notes "Checksums: see SHA256SUMS. Code signing policy: https://pget.pg72.tw/code-signing/"

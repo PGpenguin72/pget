@@ -9,12 +9,12 @@ const OUT = join(ROOT, 'public');
 const SITE = 'https://pget.pg72.tw';
 const REPO = 'https://github.com/PGpenguin72/pget';
 const EMAIL = 'developer@pg72.tw';
-const UPDATED = '2026-11-03';
+const UPDATED = '2026-11-04';
 
 // 第一個是預設語言，放在網站根目錄
 const LOCALES = ['zh-TW', 'en', 'zh-CN', 'ja', 'ko'];
 const dir = (code) => (code === LOCALES[0] ? '' : code.toLowerCase() + '/');
-const pages = ['', 'privacy/', 'terms/'];
+const pages = ['', 'privacy/', 'terms/', 'code-signing/'];
 
 const t = {};
 for (const code of LOCALES) t[code] = (await import(`./src/locales/${code}.mjs`)).default;
@@ -80,6 +80,7 @@ ${body}
     <nav>
       <a href="${base}privacy/">${L.nav.privacy}</a>
       <a href="${base}terms/">${L.nav.terms}</a>
+      <a href="${base}code-signing/">${L.nav.signing}</a>
       <a href="${REPO}">${L.nav.source}</a>
       <a href="mailto:${EMAIL}">${EMAIL}</a>
     </nav>
@@ -123,6 +124,7 @@ ${features}
 ${dl}
       </div>
       <p class="note">${L.dlNote}</p>
+      <p class="note"><a href="code-signing/">${t[code].nav.signing}</a></p>
     </section>
     <section class="why">
       <h2>${L.whyTitle}</h2>
@@ -149,6 +151,7 @@ for (const code of LOCALES) {
     '': layout(code, '', L.home.metaTitle, L.home.metaDesc, home(code)),
     'privacy/': layout(code, 'privacy/', `${L.privacy.title} · PGet`, L.privacy.desc, doc(code, 'privacy')),
     'terms/': layout(code, 'terms/', `${L.terms.title} · PGet`, L.terms.desc, doc(code, 'terms')),
+    'code-signing/': layout(code, 'code-signing/', `${L.signing.title} · PGet`, L.signing.desc, doc(code, 'signing')),
   };
   for (const [page, html] of Object.entries(files)) {
     const p = join(OUT, dir(code), page, 'index.html');

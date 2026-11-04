@@ -1,6 +1,6 @@
 export default {
   langName: '한국어',
-  nav: { features: '기능', download: '다운로드', privacy: '개인정보처리방침', terms: '이용약관', source: '소스 코드' },
+  nav: { features: '기능', download: '다운로드', privacy: '개인정보처리방침', terms: '이용약관', source: '소스 코드', signing: "코드 서명 정책(Code signing policy)" },
   theme: { label: '테마', light: '라이트', dark: '다크', system: '시스템 설정' },
   footer: 'PGet은 MIT 라이선스로 공개된 오픈 소스입니다 · © 2026 PGpenguin72',
   notFound: '페이지를 찾을 수 없습니다.',
@@ -53,6 +53,17 @@ export default {
     ],
   },
 
+  signing: {
+    title: "코드 서명 정책",
+    desc: "PGet Windows 버전의 코드 서명 방식, 담당자, 개인정보 안내입니다.",
+    sections: [
+      ["Code signing policy", "<p>Free code signing provided by <a href=\"https://about.signpath.io\">SignPath.io</a>, certificate by <a href=\"https://signpath.org\">SignPath Foundation</a>.</p><p>PGet의 Windows 설치 파일(설치판과 포터블판)은 SignPath Foundation이 무료로 코드 서명합니다. 서명 후 Windows에는 게시자가 “SignPath Foundation”으로 표시됩니다. 현재 신청 중이므로, 서명을 시작하기 전에 배포된 버전은 아직 서명되지 않았습니다.</p>"],
+      ["무엇을, 어떻게 서명하나요", "<ul><li>이 프로젝트의 소스 코드로 빌드한 파일(Windows 설치판과 포터블판 exe)만 서명합니다.</li><li>모든 파일은 <a href=\"{repo}\">공개된 소스 코드</a>로부터 GitHub Actions가 GitHub 호스팅 러너에서 자동으로 빌드합니다. 빌드 스크립트도 저장소에 공개되어 있습니다.</li><li>함께 들어 있는 서드파티 오픈소스 구성 요소(aria2, yt-dlp, Electron 라이브러리)는 이 프로젝트의 인증서로 서명하지 않고, 원작자가 배포한 그대로 포함합니다.</li><li>릴리스마다 서명 요청은 승인자가 직접 승인합니다.</li></ul>"],
+      ["팀과 역할", "<ul><li>Committers and reviewers(커밋·리뷰): <a href=\"https://github.com/PGpenguin72\">PGpenguin72</a></li><li>Approvers(서명 승인): <a href=\"https://github.com/PGpenguin72\">PGpenguin72</a></li></ul><p>외부 기여자의 변경(pull request)은 리뷰를 거친 뒤에 병합합니다. 모든 구성원은 GitHub와 SignPath에서 2단계 인증을 사용합니다.</p>"],
+      ["개인정보", "<p>PGet이 어떤 데이터를 어디로 보내는지는 <a href=\"../privacy/\">개인정보처리방침</a>을 참고하세요. 간단히 말하면, PGet은 다운로드를 요청한 주소에만 연결합니다. BT/마그넷 다운로드는 BT 네트워크에 연결하고, “자동으로 업데이트 확인”은 GitHub에 연결합니다(설정에서 끌 수 있습니다).</p>"],
+      ["직접 확인하기", "<p>Windows에서 설치 파일을 마우스 오른쪽 버튼으로 클릭 → “속성” → “디지털 서명”에서 서명자와 서명 시각을 확인할 수 있습니다. GitHub Release의 <code>SHA256SUMS</code>로 파일을 대조할 수도 있습니다.</p>"],
+    ],
+  },
   terms: {
     title: '이용약관',
     desc: 'PGet 데스크톱 앱, 브라우저 확장 프로그램 및 이 웹사이트의 이용 약관입니다.',

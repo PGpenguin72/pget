@@ -1,6 +1,6 @@
 export default {
   langName: '简体中文',
-  nav: { features: '功能', download: '下载', privacy: '隐私政策', terms: '服务条款', source: '源代码' },
+  nav: { features: '功能', download: '下载', privacy: '隐私政策', terms: '服务条款', source: '源代码', signing: "代码签名政策（Code signing policy）" },
   theme: { label: '主题', light: '浅色', dark: '深色', system: '跟随系统' },
   footer: 'PGet 基于 MIT 许可证开源 · © 2026 PGpenguin72',
   notFound: '找不到这个页面。',
@@ -53,6 +53,17 @@ export default {
     ],
   },
 
+  signing: {
+    title: "代码签名政策",
+    desc: "PGet Windows 版的代码签名方式、负责人与隐私说明。",
+    sections: [
+      ["Code signing policy", "<p>Free code signing provided by <a href=\"https://about.signpath.io\">SignPath.io</a>, certificate by <a href=\"https://signpath.org\">SignPath Foundation</a>.</p><p>PGet 的 Windows 安装包（安装版与便携版）由 SignPath Foundation 提供免费的代码签名，签名后 Windows 会显示发布者为“SignPath Foundation”。目前正在申请中，签名开始之前发布的版本仍然没有签名。</p>"],
+      ["签什么、怎么签", "<ul><li>只签本项目源代码构建出来的文件：Windows 的安装版与便携版 exe。</li><li>所有文件都由 GitHub Actions 在 GitHub 提供的主机上，从<a href=\"{repo}\">公开的源代码</a>自动构建；构建脚本也一起公开在仓库里。</li><li>附带的第三方开源组件（aria2、yt-dlp、Electron 的库）不会用本项目的证书签名，保持原作者发布的样子。</li><li>每一次发版的签名请求，都要由审批者手动批准。</li></ul>"],
+      ["团队与角色", "<ul><li>Committers and reviewers（提交与审查）：<a href=\"https://github.com/PGpenguin72\">PGpenguin72</a></li><li>Approvers（批准签名）：<a href=\"https://github.com/PGpenguin72\">PGpenguin72</a></li></ul><p>外部贡献者的改动（pull request）都要经过审查才会合并。所有成员的 GitHub 与 SignPath 账号都开启两步验证。</p>"],
+      ["隐私", "<p>PGet 会发送哪些数据、发到哪里，请看<a href=\"../privacy/\">隐私政策</a>。简单说：PGet 只会连接到你要求下载的网址；BT／磁力下载会连接到 BT 网络；“自动检查更新”会连接到 GitHub，可以在设置里关闭。</p>"],
+      ["自己验证", "<p>在 Windows 对安装包点右键 →“属性”→“数字签名”，可以看到签名者与签名时间。也可以用 GitHub Release 里的 <code>SHA256SUMS</code> 核对文件。</p>"],
+    ],
+  },
   terms: {
     title: '服务条款',
     desc: '使用 PGet 桌面软件、浏览器扩展与本网站的条款。',

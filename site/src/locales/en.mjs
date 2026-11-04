@@ -1,6 +1,6 @@
 export default {
   langName: 'English',
-  nav: { features: 'Features', download: 'Download', privacy: 'Privacy Policy', terms: 'Terms of Service', source: 'Source code' },
+  nav: { features: 'Features', download: 'Download', privacy: 'Privacy Policy', terms: 'Terms of Service', source: 'Source code', signing: "Code signing policy" },
   theme: { label: 'Theme', light: 'Light', dark: 'Dark', system: 'System' },
   footer: 'PGet is open source under the MIT License · © 2026 PGpenguin72',
   notFound: 'This page could not be found.',
@@ -53,6 +53,17 @@ export default {
     ],
   },
 
+  signing: {
+    title: "Code signing policy",
+    desc: "How the Windows builds of PGet are code-signed, who is responsible, and privacy.",
+    sections: [
+      ["Code signing policy", "<p>Free code signing provided by <a href=\"https://about.signpath.io\">SignPath.io</a>, certificate by <a href=\"https://signpath.org\">SignPath Foundation</a>.</p><p>The Windows installers of PGet (installer and portable) are code-signed for free by SignPath Foundation; Windows shows the publisher as “SignPath Foundation”. Our application is in progress, so releases published before signing starts are still unsigned.</p>"],
+      ["What is signed, and how", "<ul><li>Only files built from this project’s own source code are signed: the Windows installer and portable exe.</li><li>Every file is built automatically by GitHub Actions on GitHub-hosted runners from the <a href=\"{repo}\">public source code</a>; the build scripts are public in the repository too.</li><li>Bundled third-party open-source components (aria2, yt-dlp, Electron’s libraries) are not signed with this project’s certificate and are shipped as their authors released them.</li><li>Every release signing request is approved manually by an approver.</li></ul>"],
+      ["Team roles", "<ul><li>Committers and reviewers: <a href=\"https://github.com/PGpenguin72\">PGpenguin72</a></li><li>Approvers: <a href=\"https://github.com/PGpenguin72\">PGpenguin72</a></li></ul><p>Changes from outside contributors (pull requests) are reviewed before they are merged. All team members use multi-factor authentication for GitHub and SignPath.</p>"],
+      ["Privacy", "<p>What PGet sends and where is described in the <a href=\"../privacy/\">Privacy Policy</a>. In short: PGet only connects to the addresses you ask it to download; BitTorrent/magnet downloads connect to the BitTorrent network; “Check for updates automatically” contacts GitHub and can be turned off in Settings.</p>"],
+      ["Verify it yourself", "<p>On Windows, right-click the installer → Properties → Digital Signatures to see who signed it and when. You can also check files against <code>SHA256SUMS</code> in the GitHub release.</p>"],
+    ],
+  },
   terms: {
     title: 'Terms of Service',
     desc: 'Terms for using the PGet desktop app, browser extension and this website.',
