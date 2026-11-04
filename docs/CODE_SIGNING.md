@@ -36,7 +36,7 @@ SignPath 那邊：
 
 ### Artifact configuration（slug：`installers`）
 
-workflow 上傳的 artifact 是一個 zip，裡面有兩個 exe。`version` 參數由 workflow 傳入（tag 名稱，例如 `v0.1.2`）。
+workflow 上傳的 artifact 是一個 zip，裡面有兩個 exe。`version` 參數由 workflow 傳入（tag 名稱，例如 `v0.1.3`）。
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>

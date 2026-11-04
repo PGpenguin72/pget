@@ -1,7 +1,7 @@
 {
   "name": "pget",
   "productName": "PGet",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "開源、免費、沒有夾帶任何東西的多線路下載器",
   "main": "src/main/main.js",
   "type": "commonjs",
