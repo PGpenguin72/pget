@@ -54,6 +54,7 @@ export default {
   },
 
   signing: {
+    pending: "（申請中のため、現在の Windows 版はまだ署名されていません）",
     title: "コード署名ポリシー",
     desc: "PGet の Windows 版のコード署名の方法、担当者、プライバシーについて。",
     sections: [

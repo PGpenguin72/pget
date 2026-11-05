@@ -54,6 +54,7 @@ export default {
   },
 
   signing: {
+    pending: "（申请中，目前的 Windows 版尚未签名）",
     title: "代码签名政策",
     desc: "PGet Windows 版的代码签名方式、负责人与隐私说明。",
     sections: [

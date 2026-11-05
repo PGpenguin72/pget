@@ -54,6 +54,7 @@ export default {
   },
 
   signing: {
+    pending: "(application pending — current Windows builds are not signed yet)",
     title: "Code signing policy",
     desc: "How the Windows builds of PGet are code-signed, who is responsible, and privacy.",
     sections: [

@@ -54,6 +54,7 @@ export default {
   },
 
   signing: {
+    pending: "(신청 중이며, 현재 Windows 버전은 아직 서명되지 않았습니다)",
     title: "코드 서명 정책",
     desc: "PGet Windows 버전의 코드 서명 방식, 담당자, 개인정보 안내입니다.",
     sections: [
