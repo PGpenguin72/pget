@@ -87,6 +87,9 @@
       ],
       "notarize": false
     },
+    "dmg": {
+      "sign": true
+    },
     "linux": {
       "category": "Network",
       "icon": "build/icon.png",
@@ -96,6 +99,7 @@
         "deb"
       ]
     },
-    "afterSign": "build/notarize.js"
+    "afterSign": "build/notarize.js",
+    "afterAllArtifactBuild": "build/notarize-dmg.js"
   }
 }

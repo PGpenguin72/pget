@@ -130,6 +130,14 @@ jobs:
             for i in 1 2 3 4 5; do xcrun stapler validate "$app" && break; [ $i = 5 ] && exit 1; sleep 15; done
             spctl --assess --type execute --verbose=4 "$app"
           done
+          for dmg in *.dmg; do
+            echo "== $dmg"
+            codesign --verify --strict --verbose=2 "$dmg"
+            for i in 1 2 3 4 5; do xcrun stapler validate "$dmg" && break; [ $i = 5 ] && exit 1; sleep 15; done
+            spctl --assess --type open --context context:primary-signature --verbose=4 "$dmg"
+          done
+          # dmg 被 staple 過，blockmap 與 latest-mac.yml 的雜湊已經不對；PGet 沒用 electron-updater，直接拿掉
+          rm -f ./*.dmg.blockmap latest-mac.yml
 
       # --- Windows 程式碼簽章（SignPath Foundation，見 docs/CODE_SIGNING.md）---
       # 只在推 tag 且設定了 repo 變數 SIGNPATH_ORGANIZATION_ID 時執行；沒設定就照舊產出未簽章的檔案。
