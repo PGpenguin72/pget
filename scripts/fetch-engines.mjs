@@ -56,10 +56,29 @@ function sha256File(file) {
   return createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 }
 
+// GitHub 的 releases/download 偶爾會回 5xx（例如 504），網路錯誤和 5xx／429 就等一下重試；4xx 直接失敗
+async function fetchRetry(url, tries = 6) {
+  for (let i = 1; ; i++) {
+    let res, err;
+    try {
+      res = await fetch(url, { redirect: 'follow', headers: { 'User-Agent': 'pget-fetch-engines' } });
+      if (res.ok) return res;
+      err = new Error(`HTTP ${res.status} ${url}`);
+      if (res.status < 500 && res.status !== 429) throw err;
+    } catch (e) {
+      if (res && !res.ok && res.status < 500 && res.status !== 429) throw e;
+      err = e;
+    }
+    if (i >= tries) throw err;
+    const wait = Math.min(60, 5 * 2 ** (i - 1));
+    warn(`${err.message}，${wait} 秒後重試（${i}/${tries - 1}）`);
+    await new Promise((r) => setTimeout(r, wait * 1000));
+  }
+}
+
 async function download(url, dest) {
   log('下載', url);
-  const res = await fetch(url, { redirect: 'follow', headers: { 'User-Agent': 'pget-fetch-engines' } });
-  if (!res.ok) throw new Error(`HTTP ${res.status} ${url}`);
+  const res = await fetchRetry(url);
   const buf = Buffer.from(await res.arrayBuffer());
   fs.mkdirSync(path.dirname(dest), { recursive: true });
   fs.writeFileSync(dest, buf);
@@ -67,8 +86,7 @@ async function download(url, dest) {
 }
 
 async function fetchText(url) {
-  const res = await fetch(url, { redirect: 'follow', headers: { 'User-Agent': 'pget-fetch-engines' } });
-  if (!res.ok) throw new Error(`HTTP ${res.status} ${url}`);
+  const res = await fetchRetry(url);
   return res.text();
 }
 
