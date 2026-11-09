@@ -18,7 +18,7 @@ export default {
     features: [
       ['⚡', 'Multi-connection', 'Splits each file into many parts and downloads them at once. 32 connections by default, up to 128.'],
       ['⏯️', 'Resume anytime', 'Lost your connection or shut down? Pick up right where you left off.'],
-      ['🧩', 'Browser integration', 'Extensions for Chrome, Edge and Firefox (the Firefox add-on is under review). Click a download and PGet takes over — even on sites that require you to sign in.'],
+      ['🧩', 'Browser integration', 'Extensions for Chrome, Edge and Firefox (<a href="#extension">get them from the stores</a>). Click a download and PGet takes over — even on sites that require you to sign in.'],
       ['🎬', 'Video sites', 'Paste a YouTube, Bilibili or similar link, pick a quality, and download.'],
       ['🧲', 'BitTorrent / magnet', 'Drop in torrent files and magnet links directly.'],
       ['🚦', 'Queue & speed limits', 'Control how many downloads run at once and how fast, so your connection stays usable.'],
@@ -35,6 +35,9 @@ export default {
     dlTitle: 'Download PGet',
     dl: { win: 'Windows 10 / 11', mac: 'macOS 12 or later', linux: 'AppImage / .deb' },
     dlNote: 'Every installer is built automatically by GitHub Actions from the public source code.',
+    extTitle: 'Browser extension',
+    extLead: 'Install PGet first, then add the extension — downloads in your browser will be handed to PGet automatically.',
+    ext: { chrome: 'Chrome Web Store', chromeNote: 'Microsoft Edge can install it from the Chrome Web Store too', firefox: 'Firefox Add-ons', firefoxNote: 'Firefox 140 or later (desktop)', install: 'Install', pending: 'In review — coming soon' },
     whyTitle: 'Why PGet?',
     why: 'There used to be a great download manager. Then it started bundling an SDK that turned your connection into a proxy for other people, and antivirus software began flagging the whole thing as malware. PGet aims to be just as handy, but something you can trust completely — and even read every line of yourself.',
   },

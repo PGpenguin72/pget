@@ -201,6 +201,15 @@
   "optThemeDark": {
     "message": "Dark"
   },
+  "optLanguage": {
+    "message": "Language"
+  },
+  "optLanguageDesc": {
+    "message": "Language used by the extension's pages, context menu and notifications."
+  },
+  "optLanguageAuto": {
+    "message": "Follow the browser (default)"
+  },
   "optAbout": {
     "message": "About"
   },

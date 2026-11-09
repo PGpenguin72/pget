@@ -40,12 +40,16 @@ Firefox（140 以上）：
 | `lib/ext.js` | `ext`（`browser` 或 `chrome`）與 `IS_FIREFOX` |
 | `lib/pget-client.js` | 協定用戶端：探測 17890–17899、`/ping`、`/pair`、`/add`；401 時清掉 token |
 | `lib/settings.js` | 設定預設值與 storage 存取 |
-| `lib/i18n.js`, `lib/theme.js` | 介面翻譯、淺色／深色主題 |
+| `lib/i18n.js`, `lib/theme.js` | 介面翻譯（含使用者自選語言）、淺色／深色主題 |
 | `popup.*`, `options.*`, `styles/` | 工具列視窗與設定頁 |
 | `_locales/` | zh_TW、en、zh_CN、ja、ko |
 | `icons/` | `icon.svg` 與 16/32/48/128 PNG（`scripts/make-icons.py` 產生） |
 | `scripts/check-i18n.mjs` | 驗證 manifest 與翻譯鍵：`node extension/scripts/check-i18n.mjs` |
 | `scripts/build.mjs` | 產生 Chrome／Firefox 兩個版本到 `dist/extension/` |
+
+## 介面語言
+
+預設跟隨瀏覽器（`_locales` + `i18n.getMessage`）。設定頁「外觀與通知」可以改成繁體中文、English、简体中文、日本語、한국어，存在 `storage.sync` 的 `language`（`auto` 為跟隨瀏覽器）。選了語言後，`lib/i18n.js` 用 `runtime.getURL` + `fetch` 讀擴充功能自己的 `_locales/<code>/messages.json`（不需要額外權限；CSP 的 `connect-src` 因此加了 `'self'`），找不到的鍵退回 `i18n.getMessage`。設定頁、工具列視窗、右鍵選單（背景收到 `storage.onChanged` 後重建）與通知都會套用。商店與擴充功能管理頁上的名稱、說明（manifest 的 `__MSG_*__`）仍由瀏覽器語言決定。
 
 ## 攔截流程（不讓使用者掉下載）
 

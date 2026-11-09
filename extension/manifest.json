@@ -3,7 +3,7 @@
   "name": "__MSG_extName__",
   "short_name": "PGet",
   "description": "__MSG_extDescription__",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "default_locale": "zh_TW",
   "homepage_url": "https://pget.pg72.tw",
   "minimum_chrome_version": "116",
@@ -45,6 +45,6 @@
     "<all_urls>"
   ],
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'; connect-src http://127.0.0.1:*"
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' http://127.0.0.1:*"
   }
 }

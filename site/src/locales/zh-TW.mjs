@@ -18,7 +18,7 @@ export default {
     features: [
       ['⚡', '多線路併發', '一個檔案切成很多段同時下載。預設 32 條，最多可以開到 128 條。'],
       ['⏯️', '斷點續傳', '斷線、關機都沒關係，下次從斷掉的地方繼續。'],
-      ['🧩', '瀏覽器攔截', 'Chrome、Edge、Firefox 擴充功能（Firefox 附加元件審核中）。點下載就自動交給 PGet，需要登入的網站也能下載。'],
+      ['🧩', '瀏覽器攔截', 'Chrome、Edge、Firefox 擴充功能（<a href="#extension">從商店安裝</a>）。點下載就自動交給 PGet，需要登入的網站也能下載。'],
       ['🎬', '影片網站', '貼上 YouTube、Bilibili 等連結，選好畫質就能下載。'],
       ['🧲', 'BT／磁力連結', '種子和磁力連結也能直接丟進來。'],
       ['🚦', '排隊與限速', '控制同時下載的數量和速度，不會把網路吃光。'],
@@ -35,6 +35,9 @@ export default {
     dlTitle: '下載 PGet',
     dl: { win: 'Windows 10／11', mac: 'macOS 12 以上', linux: 'AppImage／.deb' },
     dlNote: '所有安裝檔都由 GitHub Actions 從公開的原始碼自動建置。',
+    extTitle: '瀏覽器擴充功能',
+    extLead: '裝好 PGet 之後，再裝上擴充功能，瀏覽器裡的下載就會自動交給 PGet。',
+    ext: { chrome: 'Chrome 線上應用程式商店', chromeNote: 'Microsoft Edge 也能從 Chrome 線上應用程式商店安裝', firefox: 'Firefox 附加元件', firefoxNote: 'Firefox 140 以上（桌面版）', install: '前往安裝', pending: '審核中，即將上架' },
     whyTitle: '為什麼做 PGet？',
     why: '以前有個很好用的下載器，後來被夾帶了「把你的網路借給別人當代理」的 SDK，結果整個被防毒軟體判成病毒。PGet 想做的就是一個一樣好用，但你可以完全放心、甚至自己看過每一行程式碼的版本。',
   },

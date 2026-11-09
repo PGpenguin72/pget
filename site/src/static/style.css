@@ -261,6 +261,26 @@ button.theme[data-mode="dark"] .theme-ico::before { content: "☾"; }
 .note { color: var(--muted); font-size: 0.92rem; }
 #download .note { text-align: center; margin-top: 16px; }
 
+/* 瀏覽器擴充功能（商店連結） */
+#extension { padding-top: 8px; }
+#extension .sub { color: var(--muted); max-width: 680px; margin: -12px 0 24px; }
+.dl.store { text-align: center; }
+.dl.store .store-note { font-size: 0.85rem; line-height: 1.45; margin-bottom: 6px; }
+.dl.store .pill {
+  margin-top: auto;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--accent-text);
+  background: var(--accent);
+}
+.dl.store:hover .pill { background: var(--accent-strong); }
+.dl.store.pending { box-shadow: none; background: var(--bg-soft); border-style: dashed; cursor: default; }
+.dl.store.pending:hover { border-color: var(--border); transform: none; }
+.dl.store.pending .pill { color: var(--muted); background: transparent; border: 1px solid var(--border); }
+
 /* 為什麼 */
 .why {
   max-width: 760px;

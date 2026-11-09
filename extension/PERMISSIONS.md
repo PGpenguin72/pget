@@ -2,18 +2,20 @@
 
 This file explains every permission in `manifest.json` for Chrome Web Store, Edge Add-ons and
 addons.mozilla.org (Firefox) review. The Chrome / Edge and Firefox builds request exactly the same permissions
-(see "Firefox" at the end; the Firefox add-on is under review on addons.mozilla.org).
+(see "Firefox" at the end; the Firefox add-on is published at https://addons.mozilla.org/firefox/addon/pget/).
 本文件說明 `manifest.json` 中每一項權限的用途，供 Chrome 線上應用程式商店、Edge 附加元件與 Firefox 附加元件（addons.mozilla.org）審核參考。
-Chrome／Edge 版與 Firefox 版要求的權限完全相同（差異見文末「Firefox」；Firefox 附加元件審核中）。
+Chrome／Edge 版與 Firefox 版要求的權限完全相同（差異見文末「Firefox」；Firefox 附加元件已上架：https://addons.mozilla.org/firefox/addon/pget/）。
 
 The extension has a single purpose: hand downloads from the browser to the PGet desktop
 download manager running on the same computer. It talks **only** to `http://127.0.0.1:17890–17899`
 (the PGet app). It contains no remote code, no `eval`, no analytics, and makes no requests
-to any external server. The extension-page CSP enforces this: `connect-src http://127.0.0.1:*`.
+to any external server. The extension-page CSP enforces this: `connect-src 'self' http://127.0.0.1:*` (`'self'` only lets the
+extension read its own packaged files, used to load the translation the user picked in the options page).
 
 擴充功能只有一個用途：把瀏覽器的下載交給同一台電腦上的 PGet 桌面下載器。它**只**和
 `http://127.0.0.1:17890–17899`（PGet 桌面程式）通訊；沒有遠端程式碼、沒有 `eval`、沒有分析追蹤，
-也不會連到任何外部伺服器。擴充功能頁面的 CSP 也強制限制為 `connect-src http://127.0.0.1:*`。
+也不會連到任何外部伺服器。擴充功能頁面的 CSP 也強制限制為 `connect-src 'self' http://127.0.0.1:*`（`'self'` 只允許讀取擴充功能自己封裝的檔案，
+用來載入使用者在設定頁選的介面語言）。
 
 ---
 

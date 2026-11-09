@@ -201,6 +201,15 @@
   "optThemeDark": {
     "message": "深色"
   },
+  "optLanguage": {
+    "message": "语言"
+  },
+  "optLanguageDesc": {
+    "message": "扩展程序界面、右键菜单与通知使用的语言。"
+  },
+  "optLanguageAuto": {
+    "message": "跟随浏览器（默认）"
+  },
   "optAbout": {
     "message": "关于"
   },

@@ -21,8 +21,8 @@ import {
   cookiesEnabled, getSendCookies, setSendCookies, hasCookiePermission, COOKIE_ORIGINS,
 } from './lib/settings.js';
 import { addDownload, getStatus, pair, forgetPort, PGetError } from './lib/pget-client.js';
+import { t, initI18n, onLanguageChanged } from './lib/i18n.js';
 
-const t = (key, subs) => ext.i18n.getMessage(key, subs) || key;
 const inFlight = new Set();
 const HTTP_RE = /^https?:/i;
 
@@ -76,6 +76,7 @@ async function cookieHeaderFor(url, storeId) {
 }
 
 async function notify(id, titleKey, messageKey, subs) {
+  await initI18n(); // the language chosen in the options page (or the browser's)
   const options = {
     type: 'basic',
     iconUrl: ext.runtime.getURL('icons/icon-128.png'),
@@ -103,7 +104,10 @@ async function flashBadge(text, color, sticky = false) {
 async function onSent(name) {
   flashBadge('✓', '#1f9d6b');
   const { notify: show } = await getSettings();
-  if (show) notify('', 'notifySentTitle', 'notifySentBody', [name || t('notifyUnnamedFile')]);
+  if (show) {
+    await initI18n();
+    notify('', 'notifySentTitle', 'notifySentBody', [name || t('notifyUnnamedFile')]);
+  }
 }
 
 async function onFailure(err, userInitiated) {
@@ -218,6 +222,7 @@ const MENU_PAGE_VIDEO = 'pget-page-video';
 
 async function createMenus() {
   // Promise style only: Firefox's browser.* rejects callback arguments.
+  await initI18n();
   await ext.contextMenus.removeAll();
   ext.contextMenus.create({ id: MENU_LINK, title: t('menuDownloadLink'), contexts: ['link'] });
   ext.contextMenus.create({ id: MENU_MEDIA, title: t('menuDownloadMedia'), contexts: ['video', 'audio'] });
@@ -232,6 +237,8 @@ async function createMenus() {
 const createMenusSafe = () => { createMenus().catch((e) => console.warn('PGet: menu setup error', e)); };
 ext.runtime.onInstalled.addListener(createMenusSafe);
 ext.runtime.onStartup.addListener(createMenusSafe);
+// The interface language was changed in the options page: rebuild the menu titles.
+onLanguageChanged(createMenusSafe);
 
 // ---------------------------------------------------------------- optional cookie permission
 
