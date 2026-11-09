@@ -65,9 +65,9 @@ jobs:
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 150   # Windows 簽章要等人工核准
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -156,7 +156,7 @@ jobs:
       - name: Upload unsigned installers (for SignPath)
         id: unsigned
         if: matrix.name == 'windows' && github.ref_type == 'tag' && vars.SIGNPATH_ORGANIZATION_ID != ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: unsigned-windows
           if-no-files-found: error
@@ -206,7 +206,7 @@ jobs:
           if [ ! -f "$want" ]; then echo "::error::$want is missing (auto-update needs it)"; ls -la; exit 1; fi
           cat "$want"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: installers-${{ matrix.name }}
           if-no-files-found: error
@@ -226,7 +226,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           path: assets
           pattern: installers-*
