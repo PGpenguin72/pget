@@ -1,8 +1,9 @@
 // electron-builder afterAllArtifactBuild：把已簽章的 .dmg 送 Apple 公證並 staple。
 // （裡面的 PGet.app 已經在 afterSign 的 notarize.js 公證過；這裡處理 dmg 這個外殼本身，
 //   讓下載後打開 dmg 時 Gatekeeper 也能離線驗證。）
-// staple 會改動 dmg 內容，所以 dmg 的 .blockmap 與 latest-mac.yml 會過期，release.yml 會把它們刪掉
-// （PGet 沒有用 electron-updater，這些檔案用不到）。
+// staple 會改動 dmg 內容，但 latest-mac.yml 的雜湊在這之前就算好了，所以 release.yml 之後會跑
+// build/update-info.mjs 依實際檔案重算 latest-mac.yml，並刪掉過期的 dmg .blockmap。
+// （自動更新用的是 zip，zip 不會被這裡改動。）
 // 需要 APPLE_ID、APPLE_APP_SPECIFIC_PASSWORD、APPLE_TEAM_ID；沒設就跳過。
 'use strict';
 

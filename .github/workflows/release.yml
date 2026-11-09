@@ -26,6 +26,12 @@
 #
 # Windows signing via SignPath Foundation (free for OSS): set the repo variable
 # SIGNPATH_ORGANIZATION_ID and the secret SIGNPATH_API_TOKEN, see docs/CODE_SIGNING.md.
+#
+# Auto-update (electron-updater, GitHub provider): the app reads latest.yml (Windows NSIS),
+# latest-mac.yml (macOS zip) and latest-linux.yml (AppImage) from the latest *published*
+# release, so these files and the *.blockmap files must be attached to every release.
+# Anything that changes an installer after electron-builder hashed it (SignPath signing,
+# stapling the dmg) must be followed by app/build/update-info.mjs to fix sha512/size.
 
 name: Release app
 
@@ -136,8 +142,13 @@ jobs:
             for i in 1 2 3 4 5; do xcrun stapler validate "$dmg" && break; [ $i = 5 ] && exit 1; sleep 15; done
             spctl --assess --type open --context context:primary-signature --verbose=4 "$dmg"
           done
-          # dmg 被 staple 過，blockmap 與 latest-mac.yml 的雜湊已經不對；PGet 沒用 electron-updater，直接拿掉
-          rm -f ./*.dmg.blockmap latest-mac.yml
+
+      # notarize-dmg.js 在 electron-builder 算完雜湊之後才 staple dmg，latest-mac.yml 裡 dmg 的雜湊會過期。
+      # 自動更新用的是 zip（afterSign 已公證、之後沒再改過），這裡依實際檔案重算，dmg 的 blockmap 刪掉。
+      - name: Refresh macOS update metadata
+        if: matrix.name == 'macos'
+        working-directory: app
+        run: node build/update-info.mjs dist/latest-mac.yml
 
       # --- Windows 程式碼簽章（SignPath Foundation，見 docs/CODE_SIGNING.md）---
       # 只在推 tag 且設定了 repo 變數 SIGNPATH_ORGANIZATION_ID 時執行；沒設定就照舊產出未簽章的檔案。
@@ -173,11 +184,27 @@ jobs:
         if: steps.unsigned.outcome == 'success'
         shell: bash
         working-directory: app/dist
-        # 簽章後檔案內容變了，electron-builder 產的 blockmap／latest.yml 雜湊就不對了；PGet 沒用 electron-updater，直接拿掉
+        # 簽章後檔案內容變了：blockmap 直接刪掉（自動更新會改成完整下載），
+        # latest.yml 依簽章後的安裝檔重新產生 sha512／size（自動更新會驗證這個雜湊）
         run: |
           ls -la signed
           cp -f signed/*.exe .
-          rm -rf signed ./*.blockmap latest*.yml
+          rm -rf signed ./*.blockmap
+          v=$(node -p "require('../package.json').version")
+          node ../build/update-info.mjs latest.yml --create "PGet-Setup-${v}.exe"
+          cat latest.yml
+
+      - name: Check update metadata
+        shell: bash
+        working-directory: app/dist
+        run: |
+          case "${{ matrix.name }}" in
+            windows) want=latest.yml ;;
+            macos)   want=latest-mac.yml ;;
+            linux)   want=latest-linux.yml ;;
+          esac
+          if [ ! -f "$want" ]; then echo "::error::$want is missing (auto-update needs it)"; ls -la; exit 1; fi
+          cat "$want"
 
       - uses: actions/upload-artifact@v4
         with:
@@ -209,6 +236,10 @@ jobs:
         working-directory: assets
         run: |
           ls -la
+          # 三個平台的更新資訊檔名稱不同（latest.yml／latest-mac.yml／latest-linux.yml），合併時不會互相覆蓋
+          for f in latest.yml latest-mac.yml latest-linux.yml; do
+            [ -f "$f" ] || { echo "::error::$f missing"; exit 1; }
+          done
           find . -maxdepth 1 -type f ! -name SHA256SUMS -printf '%f\0' | sort -z | xargs -0 sha256sum > SHA256SUMS
           cat SHA256SUMS
 

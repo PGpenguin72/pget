@@ -17,6 +17,8 @@ const state = {
   homepage: 'https://pget.pg72.tw',
   serverPort: 0,
   update: null,
+  view: 'tasks',
+  stats: null,
 };
 
 // ---------- i18n ----------
@@ -37,6 +39,7 @@ function applyI18n() {
   renderSettings();
   renderEngines();
   renderUpdate();
+  renderStats();
 }
 
 // ---------- 格式化 ----------
@@ -58,6 +61,18 @@ function fmtEta(sec) {
   const pad = (x) => String(x).padStart(2, '0');
   if (h > 99) return '∞';
   return h ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
+}
+// 人看得懂的時間長度，例如「3 小時 12 分」
+function fmtDuration(ms) {
+  const sec = Math.max(0, Math.round((ms || 0) / 1000));
+  const d = Math.floor(sec / 86400);
+  const h = Math.floor((sec % 86400) / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = sec % 60;
+  if (d) return t('dur.dh', { d, h });
+  if (h) return t('dur.hm', { h, m });
+  if (m) return t('dur.ms', { m, s });
+  return t('dur.s', { s });
 }
 function fmtDate(ms) {
   if (!ms) return t('settings.never');
@@ -277,11 +292,140 @@ function renderEngines() {
 
 // ---------- 更新 ----------
 
+function updateText(u) {
+  if (u.stage === 'ready') return t('update.ready', { version: u.latest });
+  if (u.stage === 'downloading') return t('update.downloading', { version: u.latest, pct: u.percent || 0 });
+  return t('update.available', { version: u.latest });
+}
+
 function renderUpdate() {
   const u = state.update;
-  const show = u && u.available && !sessionStorage.getItem(`dismiss-${u.latest}`);
+  // 下載好的更新一定顯示（就算之前按掉了下載中的提示）
+  const dismissed = u && u.stage !== 'ready' && sessionStorage.getItem(`dismiss-${u.latest}`);
+  const show = Boolean(u && u.available && !dismissed);
   $('#updateBanner').classList.toggle('hidden', !show);
-  if (show) $('#updateText').textContent = t('update.available', { version: u.latest });
+  if (!show) return;
+  $('#updateText').textContent = updateText(u);
+  $('#updateRestart').classList.toggle('hidden', u.stage !== 'ready');
+  // 自動更新不需要去 GitHub 下載；手動模式（免安裝版、.deb 等）才顯示「前往下載」
+  $('#updateView').classList.toggle('hidden', u.mode === 'auto');
+}
+
+// ---------- 統計 ----------
+
+const KINDS = ['http', 'video', 'torrent', 'magnet'];
+
+async function loadStats() {
+  try {
+    state.stats = await api.stats.get();
+  } catch (err) {
+    console.error(err);
+  }
+  renderStats();
+}
+
+function shortDay(date) {
+  const [y, m, d] = date.split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString(state.locale, { month: 'numeric', day: 'numeric' });
+}
+
+function hbar(label, value, frac, title) {
+  const li = document.createElement('li');
+  const name = span(label, 'hb-label');
+  name.title = title || label;
+  const track = document.createElement('div');
+  track.className = 'hb-track';
+  const fill = document.createElement('div');
+  fill.className = 'hb-fill';
+  fill.style.width = `${Math.max(frac > 0 ? 2 : 0, Math.min(100, frac * 100)).toFixed(1)}%`;
+  track.appendChild(fill);
+  li.append(name, track, span(value, 'hb-value'));
+  return li;
+}
+
+function renderDaily(daily) {
+  const chart = $('#stDaily');
+  const tip = $('#stTip');
+  tip.classList.add('hidden');
+  const max = Math.max(0, ...daily.map((d) => d.bytes));
+  const total = daily.reduce((a, d) => a + d.bytes, 0);
+  chart.setAttribute('aria-label', t('stats.dailyAria', { size: fmtBytes(total), n: daily.reduce((a, d) => a + d.count, 0) }));
+  const maxLabel = document.createElement('div');
+  maxLabel.className = 'chart-max';
+  maxLabel.textContent = max ? fmtBytes(max) : '';
+  chart.replaceChildren(maxLabel);
+  daily.forEach((d, i) => {
+    const col = document.createElement('div');
+    col.className = 'bar-col';
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    bar.style.height = d.bytes > 0 && max > 0 ? `max(3px, ${((d.bytes / max) * 100).toFixed(2)}%)` : '0';
+    col.appendChild(bar);
+    col.addEventListener('mouseenter', () => {
+      tip.textContent = `${shortDay(d.date)} · ${fmtBytes(d.bytes)} · ${t('stats.filesN', { n: d.count })}`;
+      tip.classList.remove('hidden');
+      const cr = chart.getBoundingClientRect();
+      const pr = chart.parentElement.getBoundingClientRect();
+      const x = cr.left - pr.left + ((i + 0.5) / daily.length) * cr.width;
+      const half = tip.offsetWidth / 2 + 8;
+      tip.style.left = `${Math.min(pr.width - half, Math.max(half, x))}px`;
+      tip.style.top = `${cr.top - pr.top - 6}px`;
+      col.classList.add('hover');
+    });
+    col.addEventListener('mouseleave', () => {
+      tip.classList.add('hidden');
+      col.classList.remove('hover');
+    });
+    chart.appendChild(col);
+  });
+  const picks = [0, Math.floor((daily.length - 1) / 2), daily.length - 1];
+  $('#stDailyAxis').replaceChildren(...picks.map((i, k) => span(k === 2 ? t('stats.today') : shortDay(daily[i].date))));
+}
+
+function renderStats() {
+  const st = state.stats;
+  if (!st) return;
+  const empty = !st.count;
+  $('#statsBody').classList.toggle('hidden', empty);
+  $('#statsEmpty').classList.toggle('hidden', !empty);
+  $('#btnClearStats').disabled = empty;
+  if (empty) return;
+  $('#stFiles').textContent = st.count.toLocaleString(state.locale);
+  $('#stSince').textContent = st.since ? t('stats.since', { date: new Date(st.since).toLocaleDateString(state.locale) }) : '';
+  $('#stSize').textContent = fmtBytes(st.bytes);
+  $('#stTime').textContent = t('stats.spent', { time: fmtDuration(st.ms) });
+  $('#stSaved').textContent = st.savedCount ? fmtDuration(st.saved) : '—';
+  $('#stSavedSub').textContent = st.savedCount ? t('stats.savedSub', { n: st.savedCount }) : t('stats.savedNone');
+  $('#stSpeed').textContent = st.avgSpeed > 0 ? fmtSpeed(st.avgSpeed) : '—';
+
+  renderDaily(st.daily);
+
+  $('#stKinds').replaceChildren(...KINDS.map((k) => {
+    const v = st.byKind[k] || { count: 0, bytes: 0 };
+    return hbar(t(`stats.kind.${k}`), `${t('stats.filesN', { n: v.count })} · ${fmtBytes(v.bytes)}`, st.count ? v.count / st.count : 0);
+  }));
+
+  const sites = $('#stSites');
+  if (!st.topDomains.length) {
+    const li = document.createElement('li');
+    li.className = 'empty-row';
+    li.appendChild(span(t('stats.noSites'), 'muted'));
+    sites.replaceChildren(li);
+  } else {
+    const top = st.topDomains[0].count;
+    sites.replaceChildren(...st.topDomains.map((d) => hbar(d.domain, `${t('stats.filesN', { n: d.count })} · ${fmtBytes(d.bytes)}`, d.count / top)));
+  }
+}
+
+function setupStats() {
+  $('#btnClearStats').addEventListener('click', () => $('#clearStatsDialog').showModal());
+  $('#clearStatsCancel').addEventListener('click', () => $('#clearStatsDialog').close());
+  $('#clearStatsDialog').querySelector('form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    $('#clearStatsDialog').close();
+    state.stats = await api.stats.clear();
+    renderStats();
+  });
 }
 
 // ---------- 設定頁 ----------
@@ -302,6 +446,8 @@ function renderSettings() {
   $('#setNotify').checked = s.notifyOnComplete;
   $('#setFocus').checked = s.focusOnAdd;
   $('#setUpdates').checked = s.checkUpdates;
+  $('#hideDockRow').classList.toggle('hidden', state.platform !== 'darwin');
+  $('#setHideDock').checked = Boolean(s.hideDock);
   for (const b of document.querySelectorAll('#setTheme button')) b.classList.toggle('on', b.dataset.value === s.theme);
   $('#loginHint').classList.toggle('hidden', state.platform !== 'linux');
   $('#setLogin').disabled = state.platform === 'linux';
@@ -379,6 +525,7 @@ function setupSettings() {
   $('#setNotify').addEventListener('change', (e) => saveSetting({ notifyOnComplete: e.target.checked }));
   $('#setFocus').addEventListener('change', (e) => saveSetting({ focusOnAdd: e.target.checked }));
   $('#setUpdates').addEventListener('change', (e) => saveSetting({ checkUpdates: e.target.checked }));
+  $('#setHideDock').addEventListener('change', (e) => saveSetting({ hideDock: e.target.checked }));
   for (const b of document.querySelectorAll('#setTheme button')) {
     b.addEventListener('click', () => saveSetting({ theme: b.dataset.value }));
   }
@@ -388,8 +535,9 @@ function setupSettings() {
     const r = await api.checkUpdate();
     if (!r || r.error) out.textContent = t('settings.updateError', { msg: r?.error || '' });
     else if (r.available) {
-      out.textContent = t('update.available', { version: r.latest });
+      out.textContent = updateText(r);
       state.update = r;
+      sessionStorage.removeItem(`dismiss-${r.latest}`);
       renderUpdate();
     } else out.textContent = t('settings.upToDate', { version: state.version });
   });
@@ -400,9 +548,13 @@ function setupSettings() {
 // ---------- 導覽 ----------
 
 function showView(name) {
+  state.view = name;
   $('#viewTasks').classList.toggle('hidden', name !== 'tasks');
   $('#viewSettings').classList.toggle('hidden', name !== 'settings');
+  $('#viewStats').classList.toggle('hidden', name !== 'stats');
   $('#openSettings').classList.toggle('active', name === 'settings');
+  $('#openStats').classList.toggle('active', name === 'stats');
+  if (name === 'stats') loadStats();
   for (const b of document.querySelectorAll('#nav .nav-item')) {
     b.classList.toggle('active', name === 'tasks' && b.dataset.filter === state.filter);
   }
@@ -417,11 +569,17 @@ function setupNav() {
     });
   }
   $('#openSettings').addEventListener('click', () => showView('settings'));
+  $('#openStats').addEventListener('click', () => showView('stats'));
   $('#btnBack').addEventListener('click', () => showView('tasks'));
   $('#btnPauseAll').addEventListener('click', () => api.tasks.pauseAll());
   $('#btnResumeAll').addEventListener('click', () => api.tasks.resumeAll());
   $('#btnClear').addEventListener('click', () => api.tasks.clearCompleted());
   $('#updateView').addEventListener('click', () => state.update?.url && api.openExternal(state.update.url));
+  $('#updateRestart').addEventListener('click', async () => {
+    $('#updateRestart').disabled = true;
+    const ok = await api.installUpdate().catch(() => false);
+    if (!ok) $('#updateRestart').disabled = false;
+  });
   $('#updateClose').addEventListener('click', () => {
     if (state.update) sessionStorage.setItem(`dismiss-${state.update.latest}`, '1');
     renderUpdate();
@@ -651,6 +809,7 @@ async function main() {
   setupSettings();
   setupAdd();
   setupRemove();
+  setupStats();
   setupDrop();
   applyI18n();
   showView('tasks');
@@ -677,6 +836,10 @@ async function main() {
   api.onUpdate((u) => {
     state.update = u;
     renderUpdate();
+  });
+  api.onStats(() => {
+    if (state.view === 'stats') loadStats();
+    else state.stats = null;
   });
   // 伺服器埠號在啟動後才確定，重新抓一次
   setTimeout(async () => {

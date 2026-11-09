@@ -30,6 +30,11 @@ contextBridge.exposeInMainWorld('pget', {
   setSettings: invoke('settings:set'),
   revokeClient: invoke('settings:revoke'),
   checkUpdate: invoke('update:check'),
+  installUpdate: invoke('update:install'),
+  stats: {
+    get: invoke('stats:get'),
+    clear: invoke('stats:clear'),
+  },
   openExternal: invoke('shell:openExternal'),
   // 拖放檔案取得本機路徑（Electron 32+ 不再有 File.path）
   pathForFile: (file) => {
@@ -40,4 +45,5 @@ contextBridge.exposeInMainWorld('pget', {
   onSettings: on('settings:update'),
   onI18n: on('i18n:update'),
   onUpdate: on('update:available'),
+  onStats: on('stats:update'),
 });

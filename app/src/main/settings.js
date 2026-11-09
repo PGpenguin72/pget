@@ -30,10 +30,11 @@ const DEFAULTS = {
   language: 'auto',         // auto | zh-TW | en | zh-CN | ja | ko
   startAtLogin: false,
   minimizeToTray: true,     // 關閉／最小化時收到系統匣
-  checkUpdates: true,       // 只查詢 GitHub 最新版本，不送出任何資料
+  checkUpdates: true,       // 自動檢查更新（支援的安裝方式會在背景下載新版），不送出任何使用者資料
   notifyOnComplete: true,
   focusOnAdd: true,         // 擴充功能送來下載時把視窗帶到前景（否則跳通知）
   videoQuality: 'best',     // 擴充功能送來影片時的預設畫質
+  hideDock: false,          // macOS：只顯示在選單列（隱藏 Dock 圖示）
   pairedClients: [],        // [{ id, client, tokenHash, createdAt, lastUsed }]
 };
 
@@ -116,7 +117,7 @@ function sanitize(patch) {
       case 'language': if (['auto', 'zh-TW', 'en', 'zh-CN', 'ja', 'ko'].includes(v)) out[k] = v; break;
       case 'videoQuality': if (typeof v === 'string' && /^(best|audio|\d{3,4})$/.test(v)) out[k] = v; break;
       case 'startAtLogin': case 'minimizeToTray': case 'checkUpdates':
-      case 'notifyOnComplete': case 'focusOnAdd':
+      case 'notifyOnComplete': case 'focusOnAdd': case 'hideDock':
         out[k] = Boolean(v); break;
       case 'pairedClients': if (Array.isArray(v)) out[k] = v; break; // 只有主程序內部會設定
       default: break;

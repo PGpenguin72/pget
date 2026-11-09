@@ -15,6 +15,8 @@ const { VideoJob, probe, isVideoUrl, removeVideoFiles } = require('./ytdlp');
 const FINAL = new Set(['completed']);
 // 連線數降級階梯
 const FALLBACK_STEPS = [32, 16, 8, 4];
+// 統計用：每幾次 tick（約幾秒）向 aria2 取樣一次各連線速度
+const SAMPLE_EVERY = 3;
 
 const newGid = () => crypto.randomBytes(8).toString('hex');
 const newId = () => crypto.randomBytes(6).toString('hex');
@@ -65,6 +67,9 @@ class Manager extends EventEmitter {
     this.aria2Error = null;
     this.timer = null;
     this.speed = 0;
+    this.tickCount = 0;
+    this.lastTickAt = 0;
+    this.sampling = false;
     for (const task of this.store.load() || []) {
       // 上次正在跑的影片程序已經不在了：回到排隊
       if (task.kind === 'video' && task.status === 'active') task.status = 'queued';
@@ -120,7 +125,7 @@ class Manager extends EventEmitter {
 
   list() {
     return [...this.tasks.values()].map((t) => {
-      const { headers, ...rest } = t; // cookie 不送給介面
+      const { headers, stat, ...rest } = t; // cookie 與統計用的內部資料不送給介面
       return rest;
     });
   }
@@ -306,13 +311,69 @@ class Manager extends EventEmitter {
     if (this.ticking) return;
     this.ticking = true;
     try {
+      this.trackActiveTime();
       await this.syncAria2();
       await this.schedule();
       this.speed = [...this.tasks.values()].reduce((s, t) => s + (t.status === 'active' ? t.downloadSpeed || 0 : 0), 0);
       this.emitTasks();
       this.persist();
+      this.tickCount += 1;
+      if (this.tickCount % SAMPLE_EVERY === 0) this.sampleConnections();
     } finally {
       this.ticking = false;
+    }
+  }
+
+  // ---------- 統計取樣 ----------
+
+  statOf(task) {
+    if (!task.stat) task.stat = { activeMs: 0, perConnSum: 0, perConnN: 0, connPeak: 0 };
+    return task.stat;
+  }
+
+  // 累計每個任務實際在下載的時間（暫停、排隊不算）
+  trackActiveTime() {
+    const now = Date.now();
+    const dt = this.lastTickAt ? Math.min(5000, Math.max(0, now - this.lastTickAt)) : 0;
+    this.lastTickAt = now;
+    if (!dt) return;
+    for (const t of this.tasks.values()) {
+      if (t.status !== 'active') continue;
+      const st = this.statOf(t);
+      st.activeMs += dt;
+      if (t.connectionsNow > st.connPeak) st.connPeak = t.connectionsNow;
+    }
+  }
+
+  // 用 aria2.getServers 取得每條 HTTP／FTP 連線的速度，記下「單一連線平均速度」，
+  // 完成時拿來估算單線下載要花多久。取樣失敗或沒有資料就跳過，不影響下載。
+  async sampleConnections() {
+    if (this.sampling || !this.aria2?.ready) return;
+    const list = [...this.tasks.values()].filter((t) => t.kind === 'http' && t.gid && t.status === 'active' && t.downloadSpeed > 0);
+    if (!list.length) return;
+    this.sampling = true;
+    try {
+      const results = await this.aria2.multicall(list.map((t) => ['getServers', t.gid])).catch(() => null);
+      if (!results) return;
+      list.forEach((task, i) => {
+        const r = results[i];
+        if (!Array.isArray(r)) return;
+        let n = 0;
+        let sum = 0;
+        for (const file of r) {
+          for (const sv of file?.servers || []) {
+            const v = Number(sv.downloadSpeed) || 0;
+            if (v > 0) { n += 1; sum += v; }
+          }
+        }
+        if (!n) return;
+        const st = this.statOf(task);
+        st.perConnSum += sum / n;
+        st.perConnN += 1;
+        if (n > st.connPeak) st.connPeak = n;
+      });
+    } finally {
+      this.sampling = false;
     }
   }
 

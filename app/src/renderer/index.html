@@ -28,6 +28,7 @@
           <div class="speed-label" data-i18n="toolbar.totalSpeed"></div>
           <div class="speed-value" id="totalSpeed">0 B/s</div>
         </div>
+        <button class="nav-item" id="openStats" data-view="stats"><span class="ico" data-icon="chart"></span><span data-i18n="nav.stats"></span></button>
         <button class="nav-item" id="openSettings" data-view="settings"><span class="ico" data-icon="gear"></span><span data-i18n="nav.settings"></span></button>
       </div>
     </aside>
@@ -55,6 +56,7 @@
         <div class="banner info hidden" id="updateBanner" role="status">
           <span class="ico" data-icon="gift"></span>
           <div id="updateText"></div>
+          <button class="btn small primary hidden" id="updateRestart" data-i18n="update.restart"></button>
           <button class="btn small" id="updateView" data-i18n="update.view"></button>
           <button class="icon-btn" id="updateClose" data-i18n-title="common.close"><span class="ico" data-icon="x"></span></button>
         </div>
@@ -64,6 +66,48 @@
           <img src="../assets/icon.svg" alt="" width="96" height="96">
           <h2 data-i18n="empty.title"></h2>
           <p data-i18n="empty.hint"></p>
+        </div>
+      </section>
+
+      <!-- 統計 -->
+      <section class="view hidden" id="viewStats">
+        <header class="toolbar">
+          <h1 class="view-title" data-i18n="stats.title"></h1>
+          <div class="spacer"></div>
+          <button class="btn ghost" id="btnClearStats"><span class="ico" data-icon="trash"></span><span data-i18n="stats.clear"></span></button>
+        </header>
+        <div class="stats" id="statsBody">
+          <div class="tiles">
+            <div class="tile"><div class="tile-label" data-i18n="stats.files"></div><div class="tile-value" id="stFiles">0</div><div class="tile-sub" id="stSince"></div></div>
+            <div class="tile"><div class="tile-label" data-i18n="stats.size"></div><div class="tile-value" id="stSize">0 B</div><div class="tile-sub" id="stTime"></div></div>
+            <div class="tile accent"><div class="tile-label" data-i18n="stats.saved"></div><div class="tile-value" id="stSaved">—</div><div class="tile-sub" id="stSavedSub"></div></div>
+            <div class="tile"><div class="tile-label" data-i18n="stats.avgSpeed"></div><div class="tile-value" id="stSpeed">—</div><div class="tile-sub" data-i18n="stats.avgSpeedSub"></div></div>
+          </div>
+
+          <section class="card chart-card">
+            <h2 data-i18n="stats.daily"></h2>
+            <div class="bar-chart" id="stDaily" role="img"></div>
+            <div class="chart-axis" id="stDailyAxis"></div>
+            <div class="chart-tip hidden" id="stTip" role="tooltip"></div>
+          </section>
+
+          <div class="stats-grid">
+            <section class="card">
+              <h2 data-i18n="stats.byKind"></h2>
+              <ul class="hbars" id="stKinds"></ul>
+            </section>
+            <section class="card">
+              <h2 data-i18n="stats.topSites"></h2>
+              <ul class="hbars" id="stSites"></ul>
+            </section>
+          </div>
+
+          <p class="muted small stats-note" data-i18n="stats.note"></p>
+        </div>
+        <div class="empty hidden" id="statsEmpty">
+          <span class="ico big" data-icon="chart"></span>
+          <h2 data-i18n="stats.emptyTitle"></h2>
+          <p data-i18n="stats.emptyHint"></p>
         </div>
       </section>
 
@@ -150,6 +194,10 @@
             <label class="row switch-row">
               <span class="row-label"><span data-i18n="settings.checkUpdates"></span><small class="hint" data-i18n="settings.checkUpdatesHint"></small></span>
               <input type="checkbox" class="switch" id="setUpdates">
+            </label>
+            <label class="row switch-row hidden" id="hideDockRow">
+              <span class="row-label"><span data-i18n="settings.hideDock"></span><small class="hint" data-i18n="settings.hideDockHint"></small></span>
+              <input type="checkbox" class="switch" id="setHideDock">
             </label>
             <div class="row">
               <span class="row-label muted" id="updateStatus"></span>
@@ -247,6 +295,19 @@
         <div class="spacer"></div>
         <button type="button" class="btn" id="removeCancel" data-i18n="common.cancel"></button>
         <button type="submit" class="btn danger" id="removeOk" data-i18n="remove.confirm"></button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- 清除統計確認 -->
+  <dialog id="clearStatsDialog" class="dialog">
+    <form method="dialog">
+      <h2 data-i18n="stats.clearTitle"></h2>
+      <p data-i18n="stats.clearMessage"></p>
+      <div class="dialog-actions">
+        <div class="spacer"></div>
+        <button type="button" class="btn" id="clearStatsCancel" data-i18n="common.cancel"></button>
+        <button type="submit" class="btn danger" id="clearStatsOk" data-i18n="stats.clear"></button>
       </div>
     </form>
   </dialog>

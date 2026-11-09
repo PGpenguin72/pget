@@ -12,7 +12,8 @@ const { I18n } = require('./i18n');
 const { detectEngines } = require('./engines');
 const { Manager } = require('./manager');
 const { LocalServer } = require('./server');
-const { checkForUpdate } = require('./updater');
+const { Updater } = require('./updater');
+const { Stats } = require('./stats');
 
 const HOMEPAGE = 'https://pget.pg72.tw';
 const REPO = 'https://github.com/PGpenguin72/pget';
@@ -33,7 +34,9 @@ let win = null;
 let tray = null;
 let quitting = false;
 let lastSpeed = 0;
-let updateInfo = null;
+let updater = null;
+let stats = null;
+const isMac = process.platform === 'darwin';
 const t = (k, v) => i18n.t(k, v);
 
 // ---------- 小工具 ----------
@@ -54,7 +57,29 @@ function showWindow() {
   if (!win || win.isDestroyed()) createWindow();
   if (win.isMinimized()) win.restore();
   win.show();
+  // 隱藏 Dock 時 PGet 不是「前景 App」，要主動搶焦點，不然視窗會開在其他 App 後面
+  if (isMac) app.focus({ steal: true });
   win.focus();
+}
+
+// 關閉視窗時要不要留在系統匣／選單列（而不是結束）
+function keepInTray() {
+  if (!tray) return false;
+  return settings.get('minimizeToTray') || (isMac && settings.get('hideDock'));
+}
+
+// macOS：只顯示在選單列（隱藏 Dock 圖示）。沒有選單列圖示時不隱藏，免得找不到 PGet。
+function applyDock() {
+  if (!isMac || !app.dock) return;
+  const hide = settings.get('hideDock') && Boolean(tray);
+  const visible = win && !win.isDestroyed() && win.isVisible();
+  if (hide) {
+    app.dock.hide();
+    // 隱藏 Dock 會讓 App 失去前景，原本開著的視窗要再叫回來
+    if (visible) setTimeout(showWindow, 50);
+  } else {
+    Promise.resolve(app.dock.show()).then(() => { if (visible) showWindow(); }).catch(() => {});
+  }
 }
 
 function notify(title, body) {
@@ -110,8 +135,16 @@ function createWindow() {
   win.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
   win.webContents.on('will-navigate', (e) => e.preventDefault());
 
+  // 隱藏 Dock 時沒有選單列，Cmd+Q／Cmd+W 自己處理
+  win.webContents.on('before-input-event', (e, input) => {
+    if (!isMac || input.type !== 'keyDown' || !input.meta || input.control || input.alt) return;
+    const key = String(input.key).toLowerCase();
+    if (key === 'q') { e.preventDefault(); quitting = true; app.quit(); }
+    else if (key === 'w') { e.preventDefault(); win.close(); }
+  });
+
   win.on('close', (e) => {
-    if (!quitting && settings.get('minimizeToTray') && tray) {
+    if (!quitting && keepInTray()) {
       e.preventDefault();
       win.hide();
     }
@@ -143,6 +176,10 @@ function buildTrayMenu(force = true) {
     { label: t('tray.show'), click: showWindow },
     { label: t('tray.pauseAll'), click: () => manager.pauseAll() },
     { label: t('tray.resumeAll'), click: () => manager.resumeAll() },
+    ...(updater?.info?.stage === 'ready' ? [
+      { type: 'separator' },
+      { label: t('tray.restartToUpdate', { version: updater.info.latest }), click: installUpdate },
+    ] : []),
     { type: 'separator' },
     { label: t('tray.quit'), click: () => { quitting = true; app.quit(); } },
   ]));
@@ -224,7 +261,7 @@ function initPayload() {
     engines: manager.engineStatus(),
     tasks: manager.list(),
     serverPort: server?.port || 0,
-    update: updateInfo,
+    update: updater?.info || null,
   };
 }
 
@@ -305,7 +342,10 @@ function registerIpc() {
     settings.set({ pairedClients: settings.get('pairedClients').filter((c) => c.id !== id) });
     return settings.publicView();
   });
-  h('update:check', () => runUpdateCheck(true));
+  h('update:check', () => updater.check(true));
+  h('update:install', () => installUpdate());
+  h('stats:get', () => stats.summary());
+  h('stats:clear', () => { stats.clear(); return stats.summary(); });
   h('shell:openExternal', (url) => {
     // 只開本專案自己的網址
     if (typeof url === 'string' && (url.startsWith(`${HOMEPAGE}/`) || url === HOMEPAGE || url.startsWith(`${REPO}`))) {
@@ -317,6 +357,7 @@ function registerIpc() {
 function onSettingsChanged(changed) {
   if ('theme' in changed) applyTheme();
   if ('startAtLogin' in changed) applyLoginItem();
+  if ('hideDock' in changed) applyDock();
   if ('language' in changed) {
     i18n.setLanguage(settings.get('language'));
     buildTrayMenu();
@@ -326,15 +367,55 @@ function onSettingsChanged(changed) {
   send('settings:update', settings.publicView());
 }
 
-async function runUpdateCheck(manual) {
+// 結束前收好 aria2、本機端點、設定與統計（一般結束與更新安裝共用）
+let cleanedUp = false;
+async function cleanup() {
+  if (cleanedUp) return;
+  cleanedUp = true;
+  quitting = true;
   try {
-    updateInfo = await checkForUpdate(app.getVersion());
-    if (updateInfo.available) send('update:available', updateInfo);
-    return updateInfo;
+    updater?.stop();
+    server?.stop();
+    await manager?.stop();
+    settings?.flush();
+    stats?.flush();
   } catch (err) {
-    if (manual) return { error: err.message };
-    return null;
+    console.error('[cleanup]', err);
   }
+}
+
+async function installUpdate() {
+  if (updater?.info?.stage !== 'ready') return false;
+  await cleanup();
+  tray?.destroy();
+  tray = null;
+  try {
+    if (updater.installNow()) return true;
+  } catch (err) {
+    console.error('[updater] install failed', err);
+  }
+  app.quit(); // 已經收拾好了，安裝失敗就照一般方式結束（下次啟動會再檢查）
+  return false;
+}
+
+function setupUpdater() {
+  updater = new Updater({ isEnabled: () => settings.get('checkUpdates') });
+  let lastStage = null;
+  updater.on('state', (info) => {
+    send('update:available', info);
+    // 選單開著時重建會被關掉，只在狀態改變（例如下載好了）時重建
+    if (info.stage !== lastStage) {
+      lastStage = info.stage;
+      buildTrayMenu();
+    }
+  });
+  updater.on('downloaded', (info) => {
+    notify(t('update.readyTitle'), t('update.readyBody', { version: info.latest }));
+  });
+  updater.on('available', (info) => {
+    notify(t('update.availableTitle'), t('update.available', { version: info.latest }));
+  });
+  updater.start();
 }
 
 // ---------- 啟動 ----------
@@ -363,16 +444,21 @@ app.whenReady().then(async () => {
     send('tasks:update', list, speed);
   });
   manager.on('engines', (st) => send('engines:update', st));
+  stats = new Stats();
+  stats.on('change', () => send('stats:update'));
   manager.on('completed', (task) => {
+    stats.record(task);
     if (settings.get('notifyOnComplete')) notify(t('notify.doneTitle'), task.name);
   });
   manager.on('failed', (task) => {
     if (settings.get('notifyOnComplete')) notify(t('notify.failedTitle'), task.name);
   });
 
+  setupUpdater(); // 要在 registerIpc 之前，介面一開就可能按「立即檢查」
   registerIpc();
   createWindow();
   createTray();
+  applyDock();
   setInterval(() => buildTrayMenu(false), 2000);
 
   await manager.start();
@@ -391,31 +477,27 @@ app.whenReady().then(async () => {
     console.error('[server]', err);
   }
 
-  if (settings.get('checkUpdates')) setTimeout(() => runUpdateCheck(false), 5000);
 });
 
 app.on('activate', showWindow);
 
 app.on('window-all-closed', () => {
   // 有系統匣就繼續在背景跑
-  if (!tray || !settings.get('minimizeToTray')) {
+  if (!keepInTray()) {
     quitting = true;
     app.quit();
   }
 });
 
-let cleanedUp = false;
 app.on('before-quit', async (e) => {
   quitting = true;
   if (cleanedUp) return;
   e.preventDefault();
-  cleanedUp = true;
   try {
-    server?.stop();
-    await manager?.stop();
-    settings?.flush();
+    await cleanup();
   } finally {
     tray?.destroy();
+    tray = null;
     app.quit();
   }
 });
