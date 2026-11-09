@@ -18,7 +18,7 @@ export default {
     features: [
       ['⚡', '多线程并发', '把一个文件切成很多段同时下载。默认 32 线程，最多可开到 128 线程。'],
       ['⏯️', '断点续传', '断网、关机都没关系，下次从中断的地方继续。'],
-      ['🧩', '浏览器接管', '提供 Chrome、Edge、Firefox 扩展（Firefox 附加组件审核中）。点击下载就自动交给 PGet，需要登录的网站也能下载。'],
+      ['🧩', '浏览器接管', '提供 Chrome、Edge、Firefox 扩展（<a href="#extension">从商店安装</a>）。点击下载就自动交给 PGet，需要登录的网站也能下载。'],
       ['🎬', '视频网站', '粘贴 YouTube、哔哩哔哩等链接，选好画质即可下载。'],
       ['🧲', 'BT／磁力链接', '种子文件和磁力链接也能直接拖进来。'],
       ['🚦', '队列与限速', '控制同时下载的任务数和速度，不会把带宽占满。'],
@@ -35,6 +35,9 @@ export default {
     dlTitle: '下载 PGet',
     dl: { win: 'Windows 10／11', mac: 'macOS 12 及以上', linux: 'AppImage／.deb' },
     dlNote: '所有安装包均由 GitHub Actions 根据公开的源代码自动构建。',
+    extTitle: '浏览器扩展',
+    extLead: '先装好 PGet，再装上扩展，浏览器里的下载就会自动交给 PGet。',
+    ext: { chrome: 'Chrome 应用商店', chromeNote: 'Microsoft Edge 也可以从 Chrome 应用商店安装', firefox: 'Firefox 附加组件', firefoxNote: 'Firefox 140 及以上（桌面版）', install: '前往安装', pending: '审核中，即将上架' },
     whyTitle: '为什么要做 PGet？',
     why: '以前有一款很好用的下载器，后来捆绑了“把你的网络借给别人当代理”的 SDK，结果整个被杀毒软件判定为病毒。PGet 想做的，就是一款同样好用、但你可以完全放心，甚至能亲自看过每一行代码的下载器。',
   },

@@ -1,5 +1,5 @@
 import { ext } from './lib/ext.js';
-import { localizePage, t } from './lib/i18n.js';
+import { localizePage, t, initI18n } from './lib/i18n.js';
 import { initTheme } from './lib/theme.js';
 import { getSettings, setSettings, cookiesEnabled } from './lib/settings.js';
 
@@ -96,8 +96,10 @@ ext.storage.onChanged.addListener((changes, area) => {
   if (area === 'local' && changes.sendCookies) showCookieHint();
 });
 
-localizePage();
+initI18n().then(() => {
+  localizePage();
+  showCookieHint();
+  refresh(false);
+});
 initTheme();
 getSettings().then((s) => { pausedEl.checked = !!s.paused; });
-showCookieHint();
-refresh(false);

@@ -9,6 +9,7 @@ export const DEFAULT_SETTINGS = Object.freeze({
   excludedSites: [],      // hostnames; subdomains are matched too
   notify: true,           // show a notification when a download is sent to PGet
   theme: 'system',        // 'system' | 'light' | 'dark'
+  language: 'auto',       // 'auto' (follow the browser) | 'zh_TW' | 'en' | 'zh_CN' | 'ja' | 'ko'
 });
 
 export async function getSettings() {

@@ -38,7 +38,7 @@ label.field { cursor: pointer; }
 
 .actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
 
-input[type="number"], input[type="text"] {
+input[type="number"], input[type="text"], select {
   font: inherit;
   color: var(--text);
   background: var(--surface-2);
@@ -47,6 +47,8 @@ input[type="number"], input[type="text"] {
   padding: 7px 10px;
 }
 input[type="number"] { width: 96px; text-align: right; }
+select { cursor: pointer; flex: none; min-width: 160px; max-width: 100%; }
+select option { background: var(--surface); color: var(--text); }
 .num { display: flex; align-items: center; gap: 8px; flex: none; }
 
 .site-form { display: flex; gap: 8px; }

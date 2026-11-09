@@ -1,5 +1,5 @@
 import { ext } from './lib/ext.js';
-import { localizePage, t } from './lib/i18n.js';
+import { localizePage, t, initI18n, onLanguageChanged, LANGUAGES } from './lib/i18n.js';
 import { initTheme, applyTheme } from './lib/theme.js';
 import {
   getSettings, setSettings, normaliseSite, DEFAULT_SETTINGS,
@@ -160,12 +160,33 @@ for (const radio of document.querySelectorAll('input[name="theme"]')) {
   });
 }
 
+// ------------------------------------------------------------ language
+
+$('language').addEventListener('change', (e) => {
+  const lang = LANGUAGES.includes(e.target.value) ? e.target.value : 'auto';
+  // The page re-renders (and shows "saved") in onLanguageChanged, which the
+  // storage change fires once the new language is loaded.
+  settings = { ...settings, language: lang };
+  setSettings({ language: lang });
+});
+
+/** Re-apply every translated text on the page (after a language change). */
+function relocalize() {
+  localizePage();
+  $('language').value = settings.language;
+  $('extVersion').textContent = t('optVersion', [ext.runtime.getManifest().version]);
+  renderSites();
+  refreshStatus(false);
+}
+
 // ------------------------------------------------------------ init
 
 async function init() {
+  await initI18n();
   localizePage();
   await initTheme();
   settings = await getSettings();
+  $('language').value = LANGUAGES.includes(settings.language) ? settings.language : 'auto';
   $('paused').checked = !!settings.paused;
   $('minSize').value = String(settings.minSizeMB);
   $('notify').checked = !!settings.notify;
@@ -182,6 +203,11 @@ async function init() {
     if (area === 'session' && changes.pairing) refreshStatus(false);
     if (area === 'sync' && changes.paused) $('paused').checked = !!changes.paused.newValue;
     if (area === 'local' && changes.sendCookies) syncCookieSwitch();
+  });
+  onLanguageChanged((lang) => {
+    settings = { ...settings, language: lang };
+    relocalize();
+    toast('optSaved');
   });
   ext.permissions.onRemoved.addListener(syncCookieSwitch);
   ext.permissions.onAdded.addListener(syncCookieSwitch);

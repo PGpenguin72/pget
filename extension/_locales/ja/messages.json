@@ -201,6 +201,15 @@
   "optThemeDark": {
     "message": "ダーク"
   },
+  "optLanguage": {
+    "message": "言語"
+  },
+  "optLanguageDesc": {
+    "message": "拡張機能の画面、右クリックメニュー、通知で使う言語です。"
+  },
+  "optLanguageAuto": {
+    "message": "ブラウザーに合わせる（既定）"
+  },
   "optAbout": {
     "message": "情報"
   },

@@ -10,6 +10,10 @@ const SITE = 'https://pget.pg72.tw';
 const REPO = 'https://github.com/PGpenguin72/pget';
 const EMAIL = 'developer@pg72.tw';
 const UPDATED = '2026-11-04';
+// 擴充功能商店網址。CHROME_STORE 還是空字串時，Chrome 按鈕顯示「審核中」（不是連結）；
+// 上架後填入 Chrome 線上應用程式商店的網址再重新建置即可。
+const CHROME_STORE = '';
+const FIREFOX_STORE = 'https://addons.mozilla.org/firefox/addon/pget/';
 
 // 第一個是預設語言，放在網站根目錄
 const LOCALES = ['zh-TW', 'en', 'zh-CN', 'ja', 'ko'];
@@ -100,6 +104,16 @@ function home(code) {
     ['macOS', 'mac', '🍎'],
     ['Linux', 'linux', '🐧'],
   ].map(([name, k, ico]) => `      <a class="dl" href="${REPO}/releases/latest"><span>${ico}</span><b>${name}</b><small>${L.dl[k]}</small></a>`).join('\n');
+  const E = L.ext;
+  const stores = [
+    ['Chrome · Edge', CHROME_STORE, E.chrome, E.chromeNote],
+    ['Firefox', FIREFOX_STORE, E.firefox, E.firefoxNote],
+  ].map(([name, url, store, note]) => {
+    const inner = `<b>${name}</b><small>${store}</small><small class="store-note">${note}</small>`;
+    return url
+      ? `        <a class="dl store" href="${esc(url)}" rel="noopener"><span aria-hidden="true">🧩</span>${inner}<em class="pill">${E.install} →</em></a>`
+      : `        <div class="dl store pending"><span aria-hidden="true">🧩</span>${inner}<em class="pill">${E.pending}</em></div>`;
+  }).join('\n');
   return `    <section class="hero">
       <h1>${L.title}</h1>
       <p class="lead">${L.lead}</p>
@@ -125,6 +139,13 @@ ${dl}
       </div>
       <p class="note">${L.dlNote}</p>
       <p class="note">Windows: free code signing provided by <a href="https://about.signpath.io">SignPath.io</a>, certificate by <a href="https://signpath.org">SignPath Foundation</a> ${t[code].signing.pending} · <a href="code-signing/">${t[code].nav.signing}</a></p>
+    </section>
+    <section id="extension">
+      <h2>${L.extTitle}</h2>
+      <p class="sub">${L.extLead}</p>
+      <div class="dls stores">
+${stores}
+      </div>
     </section>
     <section class="why">
       <h2>${L.whyTitle}</h2>

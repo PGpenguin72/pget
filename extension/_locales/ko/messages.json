@@ -201,6 +201,15 @@
   "optThemeDark": {
     "message": "다크"
   },
+  "optLanguage": {
+    "message": "언어"
+  },
+  "optLanguageDesc": {
+    "message": "확장 프로그램 화면, 오른쪽 클릭 메뉴, 알림에 사용할 언어입니다."
+  },
+  "optLanguageAuto": {
+    "message": "브라우저 설정 따르기(기본값)"
+  },
   "optAbout": {
     "message": "정보"
   },

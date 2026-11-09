@@ -39,7 +39,7 @@
    - Privacy Policy：勾選「This add-on has a privacy policy」，貼上「隱私權政策」那一段，並附上網址 https://pget.pg72.tw/privacy/。
    - Notes to Reviewer：貼「給審核者的備註」（英文）。
 7. **上傳圖片**：圖示會從 manifest 帶入；截圖可以用 `docs/store/screenshot-1.png`、`screenshot-2.png`（AMO 建議 1280×800，其他尺寸也可以）。
-8. 送出後等待審核（通常幾天內）。審核通過前，官網與 README 寫的是「Firefox 附加元件審核中」；通過後把那幾處改成 AMO 的連結（`site/src/locales/*.mjs`、`site/src/static/agents.md`、`README.md`、`extension/PERMISSIONS.md`），再重新建置官網。
+8. 送出後等待審核（通常幾天內）。**已上架**：<https://addons.mozilla.org/firefox/addon/pget/>。官網的商店按鈕讀 `site/build.mjs` 的 `FIREFOX_STORE`；`README.md`、`extension/PERMISSIONS.md`、`site/src/static/agents.md`、`site/src/static/llms.txt` 也都寫了這個連結。
 9. 之後每次更新：manifest 版本號升一號 → 推 `ext-vX.Y.Z` tag → 在 AMO 的附加元件頁面「Upload New Version」上傳新的 firefox zip（ID 不變）。
 
 ---
@@ -73,7 +73,7 @@ First use: open the add-on popup, click "Pair", then click "Allow" in the PGet w
 PGet does not collect, store or share any personal data, and has no server that receives your data. The add-on only reads information about a download when you start one (the download URL, file name, file size and the page it came from) and, only if you turn on the optional "Send sign-in cookies with downloads" setting, the cookies for that one download URL. This information is sent only to the PGet desktop app on your own computer (http://127.0.0.1) so it can perform the download. It is never sent to the developer or any third party. Settings are stored in Firefox's extension storage; the pairing token stays on this computer. Full policy: https://pget.pg72.tw/privacy/
 
 ### Notes to reviewer
-- Purpose: send browser downloads to the PGet desktop download manager running on the same computer. The add-on's only network destination is the local app at http://127.0.0.1:17890-17899 (enforced by the extension-page CSP `connect-src http://127.0.0.1:*`). No remote code, no eval, no analytics, no content scripts.
+- Purpose: send browser downloads to the PGet desktop download manager running on the same computer. The add-on's only network destination is the local app at http://127.0.0.1:17890-17899 (enforced by the extension-page CSP `connect-src 'self' http://127.0.0.1:*`; 'self' only covers the add-on's own packaged files, e.g. the translation chosen in the options page). No remote code, no eval, no analytics, no content scripts.
 - The code is not minified, bundled or transpiled. The source is https://github.com/PGpenguin72/pget (folder `extension/`). The Firefox package is produced by `node extension/scripts/build.mjs firefox`, which only copies the files and rewrites manifest.json (background.scripts instead of service_worker, browser_specific_settings). No npm dependencies are used at runtime.
 - Interception: `downloads.onCreated` → pause the download → POST it to the local app → cancel and erase the browser download only after the app accepts it; on any failure the download is resumed (or restarted with `downloads.download`). Private-window downloads are never touched.
 - `cookies` + optional host permission `<all_urls>`: off by default. Requested at runtime with `permissions.request` only when the user enables "Send sign-in cookies with downloads" in the options page; `cookies.getAll({ url, storeId })` then reads cookies for the single download URL and passes them only to 127.0.0.1. Disabling the option removes the permission.
