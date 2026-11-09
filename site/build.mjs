@@ -12,7 +12,7 @@ const EMAIL = 'developer@pg72.tw';
 const UPDATED = '2026-11-09';
 // 擴充功能商店網址。CHROME_STORE 還是空字串時，Chrome 按鈕顯示「審核中」（不是連結）；
 // 上架後填入 Chrome 線上應用程式商店的網址再重新建置即可。
-const CHROME_STORE = '';
+const CHROME_STORE = 'https://chromewebstore.google.com/detail/gffkakpdaiaeckkkbehghcpdnhlkpbdl';
 const FIREFOX_STORE = 'https://addons.mozilla.org/firefox/addon/pget/';
 
 // 第一個是預設語言，放在網站根目錄

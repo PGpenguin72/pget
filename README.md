@@ -11,7 +11,7 @@
 - **多線路併發下載**：一個檔案切成很多段同時下載，預設 32 條，最多 128 條
 - **斷點續傳**：斷線、關機之後從斷掉的地方繼續
 - **排隊與限速**：控制同時下載的數量與速度
-- **瀏覽器自動攔截**：Chrome／Edge／Firefox 擴充功能（[Firefox 附加元件](https://addons.mozilla.org/firefox/addon/pget/)；Chrome 線上應用程式商店審核中，Edge 也從那裡安裝），點下載就交給 PGet，連登入狀態（cookie）一起帶過去
+- **瀏覽器自動攔截**：Chrome／Edge／Firefox 擴充功能（[Chrome 線上應用程式商店](https://chromewebstore.google.com/detail/gffkakpdaiaeckkkbehghcpdnhlkpbdl)，Edge 也從那裡安裝；[Firefox 附加元件](https://addons.mozilla.org/firefox/addon/pget/)），點下載就交給 PGet，連登入狀態（cookie）一起帶過去
 - **影片網站**：YouTube、Bilibili 等，可選畫質
 - **BT／磁力連結**
 - **Windows／macOS／Linux** 三平台

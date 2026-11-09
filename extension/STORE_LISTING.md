@@ -2,7 +2,7 @@
 
 （Chrome 線上應用程式商店／Edge 附加元件用。Firefox 附加元件（addons.mozilla.org）請看 [`AMO_LISTING.md`](AMO_LISTING.md)。）
 
-審核通過後，把商店網址填進 `site/build.mjs` 的 `CHROME_STORE` 再重新建置官網，官網的 Chrome 按鈕就會從「審核中」變成連結（`README.md`、`site/src/static/agents.md`、`site/src/static/llms.txt` 的「審核中」字樣也一起改）。
+Chrome 線上應用程式商店：https://chromewebstore.google.com/detail/gffkakpdaiaeckkkbehghcpdnhlkpbdl （已填進 `site/build.mjs` 的 `CHROME_STORE`）。
 
 Privacy policy URL / 隱私權政策網址: **https://pget.pg72.tw/privacy/**
 Homepage / 官網: **https://pget.pg72.tw**
